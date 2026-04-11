@@ -11,10 +11,12 @@ import authRoutes from "./src/routes/authRoutes.js";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-conectarMongo()
+conectarMongo();
 
-//Middleware global
-app.use(cors());
+// Permitir peticiones desde tu App en Netlify y local
+app.use(cors({
+  origin: '*' // Permite todo por ahora para asegurar conexión, luego lo cerramos
+}));
 app.use(express.json());
 
 

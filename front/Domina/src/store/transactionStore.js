@@ -3,38 +3,42 @@ import { ref, computed } from "vue";
 import { TransactionService } from "../services/TransactionService";
 
 export const useTransactionStore = defineStore("transactions", () => {
-    // --- ESTADO (Refs) ---
+    // ─── ESTADO ──────────────────────────────────────
     const transactions = ref([]);
-    const summary = ref({
-        balance: 0,
-        totalIncome: 0,
-        totalExpense: 0
-    });
-    const insights = ref({ message: '', percentageDiff: 0 });
-    const stats = ref({});
+    const summary  = ref({ balance: 0, totalIncome: 0, totalExpense: 0, count: 0 });
+    const insights = ref({ message: '', percentageDiff: '0', currentMonthExpenses: 0, lastMonthExpenses: 0 });
+    const stats    = ref({});
     const evolution = ref([]);
-    const loading = ref(false);
+    const loading  = ref(false);
+    const error    = ref(null);
 
-    // --- GETTERS ---
+    // ─── GETTERS ─────────────────────────────────────
     const hasTransactions = computed(() => transactions.value.length > 0);
 
-    // --- ACCIONES ---
-    
-    // Cargar estadísticas por categoría
+    // ─── ACCIONES ────────────────────────────────────
+
     const fetchStats = async (params) => {
         try {
             stats.value = await TransactionService.getStats(params);
-        } catch (error) {
-            console.error("Error al obtener stats:", error);
+        } catch (err) {
+            console.error("Error al obtener stats:", err);
         }
     };
 
-    // Cargar evolución mensual
     const fetchEvolution = async () => {
         try {
             evolution.value = await TransactionService.getEvolution();
-        } catch (error) {
-            console.error("Error al obtener evolución:", error);
+        } catch (err) {
+            console.error("Error al obtener evolución:", err);
+        }
+    };
+
+    // Fase 4.2 — Conecta el endpoint de insights que ya existía en backend
+    const fetchInsights = async () => {
+        try {
+            insights.value = await TransactionService.getInsights();
+        } catch (err) {
+            console.error("Error al obtener insights:", err);
         }
     };
 
@@ -42,9 +46,10 @@ export const useTransactionStore = defineStore("transactions", () => {
         loading.value = true;
         try {
             const response = await TransactionService.getAll(params);
-            transactions.value = response.data || response; 
-        } catch (error) {
-            console.error("Error cargando transacciones:", error);
+            transactions.value = response.data || response;
+        } catch (err) {
+            console.error("Error cargando transacciones:", err);
+            error.value = err;
         } finally {
             loading.value = false;
         }
@@ -53,36 +58,39 @@ export const useTransactionStore = defineStore("transactions", () => {
     const fetchSummary = async () => {
         try {
             summary.value = await TransactionService.getSummary();
-        } catch (error) {
-            console.error("Error al obtener resumen:", error);
+        } catch (err) {
+            console.error("Error al obtener resumen:", err);
         }
     };
 
+    // Refresca todos los datos después de una mutación
+    const refreshAll = async () => {
+        await Promise.all([
+            fetchSummary(),
+            fetchTransactions(),
+            fetchStats(),
+            fetchEvolution(),
+            fetchInsights()
+        ]);
+    };
+
     const addTransaction = async (formData) => {
-        try {
-            await TransactionService.create(formData);
-            await Promise.all([
-                fetchSummary(),
-                fetchTransactions(),
-                fetchStats(),
-                fetchEvolution()
-            ]);
-        } catch (error) {
-            throw error;
-        }
+        await TransactionService.create(formData);
+        await refreshAll();
+    };
+
+    // Fase 4.1 — Nueva acción para editar transacciones existentes
+    const editTransaction = async (id, formData) => {
+        await TransactionService.update(id, formData);
+        await refreshAll();
     };
 
     const removeTransaction = async (id) => {
         try {
             await TransactionService.delete(id);
-            await Promise.all([
-                fetchSummary(),
-                fetchTransactions(),
-                fetchStats(),
-                fetchEvolution()
-            ]);
-        } catch (error) {
-            console.error("Error al eliminar:", error);
+            await refreshAll();
+        } catch (err) {
+            console.error("Error al eliminar:", err);
         }
     };
 
@@ -93,15 +101,17 @@ export const useTransactionStore = defineStore("transactions", () => {
         stats,
         evolution,
         loading,
+        error,
         hasTransactions,
         fetchTransactions,
         fetchSummary,
         fetchStats,
         fetchEvolution,
+        fetchInsights,
         addTransaction,
+        editTransaction,
         removeTransaction
     };
-}, 
-{
-    persist: true 
-});
+}, {
+    persist: true
+});

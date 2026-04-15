@@ -12,7 +12,14 @@ export const protect = async (req, res, next) => {
       const decoded = jwt.verify(token, JWT_SECRET);
 
       req.user = await User.findById(decoded.id).select("-password");
-      next();
+
+      // BUGFIX: Si el usuario fue eliminado, el token aún es válido pero el user es null
+      if (!req.user) {
+        res.status(401);
+        return next(new Error("Usuario no encontrado, token inválido"));
+      }
+
+      return next();
     } catch (error) {
       res.status(401);
       return next(new Error("No autorizado, token fallido"));

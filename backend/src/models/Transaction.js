@@ -17,13 +17,13 @@ const transactionSchema = new mongoose.Schema({
     amount: {
         type: Number,
         required: [true, 'El monto es obligatorio'],
-        min: [1, 'El monto debe ser al menos 1'] 
+        min: [1, 'El monto debe ser al menos 1']
     },
     category: {
         type: String,
         required: [true, 'La categoría es obligatoria'],
         trim: true,
-        minlength: [3, 'La categoría debe tener al menos 3 caracteres']
+        minlength: [2, 'La categoría debe tener al menos 2 caracteres']
     },
     description: {
         type: String,
@@ -34,12 +34,14 @@ const transactionSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
-}, { 
+}, {
     timestamps: true,
     toJSON: {
         transform: (doc, ret) => {
+            // BUGFIX: Retorna ISO string para que el frontend pueda parsear y formatear
+            // correctamente con filtros de fecha. Antes retornaba string localizado.
             if (ret.date) {
-                ret.date = ret.date.toLocaleDateString('es-CO'); 
+                ret.date = ret.date.toISOString();
             }
             return ret;
         }

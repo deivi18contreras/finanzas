@@ -13,9 +13,10 @@ const PORT = process.env.PORT || 3000;
 
 conectarMongo();
 
-// Permitir peticiones desde tu App en Netlify y local
+// Fase 1.4 — CORS configurable por variable de entorno (restringir en producción)
 app.use(cors({
-  origin: '*' // Permite todo por ahora para asegurar conexión, luego lo cerramos
+  origin: process.env.CORS_ORIGIN || '*',
+  credentials: true
 }));
 app.use(express.json());
 
@@ -25,18 +26,13 @@ app.use("/api/auth", authRoutes);
 app.use('/api/transactions', transactionRoutes);
 
 app.get("/", (req, res) => {
-  res.send("API funcionando 🚀");
+  res.send("API Domina funcionando 🚀");
 });
 
 // Middlewares de error (Al final)
-app.use(notFound);     
-app.use(errorHandler);  
-
-
-
-
-
+app.use(notFound);
+app.use(errorHandler);
 
 app.listen(PORT, () =>{
-    console.log(`✅Servidor corriendo en puerto ${PORT}`); 
+    console.log(`✅ Servidor Domina corriendo en puerto ${PORT}`);
 })

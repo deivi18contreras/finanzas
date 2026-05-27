@@ -21,7 +21,7 @@ conectarMongo();
  * - La URL de producción se puede restringir con CORS_ORIGIN en .env de Render.
  */
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*'
+  origin: process.env.FRONTEND_URL || process.env.CORS_ORIGIN || 'https://finanzasfcb.netlify.app'
 }));
 
 app.use(express.json());

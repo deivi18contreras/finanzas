@@ -10,7 +10,7 @@ const uid = (req) => new mongoose.Types.ObjectId(req.user._id.toString());
 export const createTransaction = async (req, res, next) => {
   try {
     const { type, amount, description, category, date } = req.body;
-    if (!type || !amount || !category) {
+    if (!type || amount === undefined || amount === null || !category) {
       res.status(400);
       return next(new Error("Tipo, monto y categoría son obligatorios"));
     }

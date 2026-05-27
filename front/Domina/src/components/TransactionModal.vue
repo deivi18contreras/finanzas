@@ -113,8 +113,8 @@ const handleSave = async () => {
     formData.date        = new Date().toISOString().split('T')[0];
     emit('close');
   } catch (err) {
-    // Fase 3.3 — Ahora el usuario ve el error en vez de solo console.error
-    errorMsg.value = err?.message || 'Error al guardar. Inténtalo de nuevo.';
+    // Mejoramos la visualización del error para que muestre el mensaje real del backend
+    errorMsg.value = (typeof err === 'string' ? err : err?.message) || 'Error al guardar. Inténtalo de nuevo.';
   } finally {
     loading.value = false;
   }

@@ -10,9 +10,14 @@ export const errorHandler = (err, req, res, next) => {
    * Si usamos `err.status || 500`, sobreescribimos el 401 con 500.
    * La solución correcta es leer res.statusCode si ya fue modificado.
    */
-  const statusCode = res.statusCode && res.statusCode !== 200
+  let statusCode = res.statusCode && res.statusCode !== 200
     ? res.statusCode
     : (err.statusCode || err.status || 500);
+
+  // Si es un error de validación de Mongoose, forzamos 400
+  if (err.name === 'ValidationError') {
+    statusCode = 400;
+  }
 
   res.status(statusCode).json({
     success: false,

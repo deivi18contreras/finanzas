@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:3000/api', // La URL de tu backend
+  baseURL: 'https://finanzas-rjnw.onrender.com/api', // La URL de tu backend en producción
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'

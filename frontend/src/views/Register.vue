@@ -97,38 +97,7 @@
         </q-form>
       </q-card-section>
 
-      <!-- Separador O -->
-      <q-card-section class="row items-center q-py-xs text-grey-5">
-        <div class="col bg-grey-3" style="height: 1px;"></div>
-        <div class="col-auto q-px-sm text-caption text-weight-bold">REGÍSTRATE TAMBIÉN CON</div>
-        <div class="col bg-grey-3" style="height: 1px;"></div>
-      </q-card-section>
 
-      <!-- Redes Sociales -->
-      <q-card-section class="row q-col-gutter-sm q-pt-sm q-pb-md">
-        <div class="col-12 col-sm-6">
-          <q-btn 
-            outline 
-            color="red-5" 
-            class="full-width text-weight-bold" 
-            icon="login" 
-            label="Google"
-            @click="registroConGoogle" 
-            no-caps 
-          />
-        </div>
-        <div class="col-12 col-sm-6">
-          <q-btn 
-            outline 
-            color="indigo-5" 
-            class="full-width text-weight-bold" 
-            icon="facebook"
-            label="Facebook" 
-            @click="registroConFacebook" 
-            no-caps 
-          />
-        </div>
-      </q-card-section>
 
       <!-- Enlace a Login -->
       <q-card-section class="text-center q-pt-none">

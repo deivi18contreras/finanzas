@@ -1,24 +1,38 @@
 {
-  "name": "backend",
+  "name": "finanzas",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "jest",
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+  "description": "API REST para gestion de finanzas personales",
+  "homepage": "https://github.com/deivi18contreras/finanzas#readme",
+  "bugs": {
+    "url": "https://github.com/deivi18contreras/finanzas/issues"
   },
-  "keywords": [],
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deivi18contreras/finanzas.git"
+  },
   "license": "ISC",
+  "author": "Deivi Contreras",
   "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
-    "dotenv": "^17.4.1",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "express-validator": "^7.3.2",
+    "helmet": "^8.2.0",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.4.1",
+    "mongoose": "^9.7.3",
+    "morgan": "^1.11.0",
+    "multer": "^2.2.0",
+    "tesseract.js": "^7.0.0"
+  },
+  "devDependencies": {
     "nodemon": "^3.1.14"
   }
 }

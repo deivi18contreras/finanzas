@@ -1,0 +1,354 @@
+:root {
+  --q-primary: #6366f1;
+  --q-secondary: #10b981;
+  --q-accent: #f43f5e;
+  --q-dark: #0f172a;
+  --q-positive: #10b981;
+  --q-negative: #ef4444;
+  --q-info: #3b82f6;
+  --q-warning: #f59e0b;
+
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  --bg-app: #f8fafc;
+  --border-radius-card: 16px;
+  --border-radius-btn: 10px;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-app);
+  color: #334155;
+  margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6, .text-h1, .text-h2, .text-h3, .text-h4, .text-h5, .text-h6 {
+  font-family: var(--font-heading) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em;
+  color: #1e293b;
+}
+
+/* Custom Overrides for Quasar */
+.q-btn {
+  border-radius: var(--border-radius-btn) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.q-btn:hover {
+  transform: translateY(-1px);
+}
+
+.q-btn--flat:hover {
+  transform: none;
+  box-shadow: none !important;
+}
+
+.q-card {
+  border-radius: var(--border-radius-card) !important;
+  box-shadow: var(--shadow-md) !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  overflow: hidden;
+}
+
+.q-card:hover {
+  box-shadow: var(--shadow-lg) !important;
+  transform: translateY(-2px);
+}
+
+.q-table__container {
+  border-radius: var(--border-radius-card) !important;
+  box-shadow: var(--shadow-sm) !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+}
+
+.q-table th {
+  font-family: var(--font-heading);
+  font-weight: 600 !important;
+  color: #475569;
+  text-transform: uppercase;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.05em;
+  background-color: #f8fafc !important;
+}
+
+.q-table td {
+  font-size: 0.875rem !important;
+  color: #334155;
+}
+
+.q-table tr {
+  transition: background-color 0.2s ease;
+}
+
+.q-table tr:hover {
+  background-color: #f1f5f9 !important;
+}
+
+/* Form inputs */
+.q-field--outlined .q-field__control {
+  border-radius: 12px !important;
+}
+
+/* Glassmorphism */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.glass-panel-dark {
+  background: rgba(15, 23, 42, 0.85) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Beautiful Gradients */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+}
+
+.bg-gradient-secondary {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+}
+
+.bg-gradient-accent {
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%) !important;
+}
+
+.bg-gradient-dark {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+}
+
+.bg-gradient-info {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+}
+
+.bg-gradient-warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+}
+
+/* Custom shadow */
+.shadow-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.shadow-hover:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* =========================================
+   BOTTOM SHEET MODAL SYSTEM (Mobile-First)
+   ========================================= */
+
+/* Animación de entrada */
+@keyframes slideUpSheet {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Tarjeta del modal (bottom sheet) */
+.modal-sheet {
+  border-radius: 24px 24px 0 0 !important;
+  width: 100% !important;
+  max-width: 560px !important;
+  margin: 0 auto;
+  overflow: hidden;
+  animation: slideUpSheet 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* En desktop: modal centrado con bordes completos */
+@media (min-width: 768px) {
+  .modal-sheet {
+    border-radius: 24px !important;
+    width: 520px !important;
+  }
+}
+
+/* Variante desktop: siempre centrado, no bottom sheet */
+.modal-sheet-desktop {
+  border-radius: 24px !important;
+  width: 520px !important;
+  max-width: 100vw !important;
+  overflow: hidden;
+}
+
+/* Drag handle (manito) */
+.drag-handle {
+  width: 44px;
+  height: 5px;
+  background: rgba(255,255,255,0.4);
+  border-radius: 999px;
+  margin: 0 auto 8px;
+}
+
+.drag-handle--dark {
+  background: rgba(0,0,0,0.15);
+}
+
+/* Cabecera del modal con gradiente */
+.modal-header {
+  padding: 20px 20px 18px;
+  position: relative;
+}
+
+.modal-header .modal-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.modal-header .modal-close-btn:hover {
+  background: rgba(255,255,255,0.35);
+}
+
+.modal-header .modal-title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.modal-header .modal-subtitle {
+  color: rgba(255,255,255,0.75);
+  font-size: 0.82rem;
+  margin-top: 4px;
+}
+
+/* Cuerpo del modal */
+.modal-body {
+  padding: 20px 20px 12px;
+  overflow-y: auto;
+  max-height: 60vh;
+}
+
+@media (min-width: 768px) {
+  .modal-body {
+    max-height: 65vh;
+  }
+}
+
+/* Barra de acciones sticky al fondo */
+.modal-action-bar {
+  padding: 14px 20px 20px;
+  background: #ffffff;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  gap: 10px;
+}
+
+.modal-action-bar .btn-cancel {
+  flex: 1;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px !important;
+  font-weight: 600;
+  color: #64748b;
+  transition: all 0.2s;
+}
+
+.modal-action-bar .btn-cancel:hover {
+  background: #f8fafc;
+  transform: none;
+}
+
+.modal-action-bar .btn-confirm {
+  flex: 2;
+  border-radius: 12px !important;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+  min-height: 48px;
+}
+
+/* Inputs mejorados para móvil */
+.modal-body .q-field--filled .q-field__control {
+  border-radius: 12px !important;
+  min-height: 52px !important;
+}
+
+.modal-body .q-field--filled.q-field--dark .q-field__control {
+  background: rgba(255,255,255,0.08);
+}
+
+/* Pill selector (toggle tipo ingreso/gasto) */
+.type-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.type-pill {
+  flex: 1;
+  border-radius: 12px;
+  padding: 14px 12px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.22s ease;
+  border: 2px solid #e2e8f0;
+  color: #64748b;
+  background: #f8fafc;
+  user-select: none;
+}
+
+.type-pill.active-ingreso {
+  background: #d1fae5;
+  border-color: #10b981;
+  color: #059669;
+}
+
+.type-pill.active-gasto {
+  background: #fee2e2;
+  border-color: #ef4444;
+  color: #dc2626;
+}
+
+/* Estilos profesionales para el dropdown de categorías */
+.select-popup-premium {
+  border-radius: 16px !important;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.15) !important;
+  border: 1px solid #e2e8f0 !important;
+  overflow: hidden;
+  padding: 8px !important;
+  background: #ffffff !important;
+}
+
+.select-popup-premium .q-item {
+  border-radius: 10px !important;
+  margin-bottom: 2px;
+  padding: 10px 14px !important;
+  transition: all 0.15s ease;
+}
+
+.select-popup-premium .q-item:hover {
+  background-color: #f1f5f9 !important;
+}
+
+.select-popup-premium .q-manual-focusable--focused {
+  background-color: #eef2ff !important;
+}
+

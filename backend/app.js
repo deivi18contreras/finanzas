@@ -11,6 +11,7 @@ import deudaRoutes from './src/routes/deudaRoutes.js'
 import categoriaRoutes from './src/routes/categoriaRoutes.js'
 import presupuestoRoutes from './src/routes/presupuestoRoutes.js'
 import ocrRoutes from './src/routes/ocrRoutes.js'
+import gastoFijoRoutes from './src/routes/gastoFijoRoutes.js'
 
 
 const app = express();
@@ -30,7 +31,8 @@ app.use('/api/transaction', transactionRoutes);
 app.use('/api/deudas', deudaRoutes);
 app.use('/api/categoria', categoriaRoutes);
 app.use('/api/presupuesto', presupuestoRoutes);
-app.use('/api/ocr', ocrRoutes)
+app.use('/api/ocr', ocrRoutes);
+app.use('/api/gastos-fijos', gastoFijoRoutes)
 
 
 

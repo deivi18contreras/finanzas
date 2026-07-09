@@ -1,28 +1,16 @@
 <template>
   <q-page class="q-pa-lg bg-grey-1">
-    
+
     <div class="row justify-between items-center q-mb-xl">
       <div>
         <h4 class="text-h4 text-weight-bold q-my-none text-primary font-heading">Movimientos</h4>
         <p class="text-subtitle2 text-grey-6 q-my-none">Registra y administra todos tus ingresos y egresos diarios.</p>
       </div>
       <div class="q-gutter-sm">
-        <q-btn
-          color="secondary"
-          icon="download"
-          label="Exportar"
-          class="bg-gradient-secondary text-white text-weight-bold q-px-md"
-          no-caps
-          @click="abrirExportar"
-        />
-        <q-btn 
-          color="primary" 
-          icon="add" 
-          label="Nuevo Movimiento" 
-          class="bg-gradient-primary text-white text-weight-bold q-px-md"
-          no-caps 
-          @click="abrirModal" 
-        />
+        <q-btn color="secondary" icon="download" label="Exportar"
+          class="bg-gradient-secondary text-white text-weight-bold q-px-md" no-caps @click="abrirExportar" />
+        <q-btn color="primary" icon="add" label="Nuevo Movimiento"
+          class="bg-gradient-primary text-white text-weight-bold q-px-md" no-caps @click="abrirModal" />
       </div>
     </div>
 
@@ -32,7 +20,8 @@
         <q-card class="bg-gradient-secondary text-white shadow-hover card-premium">
           <q-card-section class="row justify-between items-center q-pa-lg">
             <div>
-              <div class="text-subtitle2 text-uppercase text-weight-bolder tracking-wider opacity-80">Total Ingresos</div>
+              <div class="text-subtitle2 text-uppercase text-weight-bolder tracking-wider opacity-80">Total Ingresos
+              </div>
               <div class="text-h3 text-weight-bold q-mt-sm font-heading">{{ formatMonto(totalIngresos) }}</div>
             </div>
             <q-avatar size="56px" class="bg-white-10">
@@ -60,28 +49,20 @@
     <!-- Tabla -->
     <q-card class="shadow-hover" style="border-radius: 16px;">
       <q-card-section class="q-pa-none">
-        <q-table
-          flat
-          :rows="transacciones"
-          :columns="columnas"
-          row-key="_id"
-          :pagination="{ rowsPerPage: 10 }"
-          class="table-premium"
-        >
+        <q-table flat :rows="transacciones" :columns="columnas" row-key="_id" :pagination="{ rowsPerPage: 10 }"
+          class="table-premium">
           <template v-slot:body-cell-monto="props">
-            <q-td :props="props" :class="props.row.tipo === 'ingreso' ? 'text-positive text-weight-bolder text-subtitle1 font-heading' : 'text-negative text-weight-bolder text-subtitle1 font-heading'">
+            <q-td :props="props"
+              :class="props.row.tipo === 'ingreso' ? 'text-positive text-weight-bolder text-subtitle1 font-heading' : 'text-negative text-weight-bolder text-subtitle1 font-heading'">
               {{ props.row.tipo === 'ingreso' ? '+' : '-' }} ${{ props.value.toLocaleString() }}
             </q-td>
           </template>
 
           <template v-slot:body-cell-categoria="props">
             <q-td :props="props">
-              <q-chip
-                :color="props.row.tipo === 'ingreso' ? 'green-1' : 'red-1'"
+              <q-chip :color="props.row.tipo === 'ingreso' ? 'green-1' : 'red-1'"
                 :text-color="props.row.tipo === 'ingreso' ? 'green-9' : 'red-9'"
-                class="text-weight-bold text-caption text-uppercase"
-                dense
-              >
+                class="text-weight-bold text-caption text-uppercase" dense>
                 {{ props.value }}
               </q-chip>
             </q-td>
@@ -89,14 +70,10 @@
 
           <template v-slot:body-cell-acciones="props">
             <q-td :props="props" class="text-center">
-              <q-btn 
-                icon="delete" 
-                color="negative" 
-                flat 
-                round 
-                dense 
-                @click="confirmarEliminar(props.row._id)"
-              >
+              <q-btn icon="edit" color="primary" flat round dense class="q-mr-xs" @click="abrirEditar(props.row)">
+                <q-tooltip>Editar Transacción</q-tooltip>
+              </q-btn>
+              <q-btn icon="delete" color="negative" flat round dense @click="confirmarEliminar(props.row._id)">
                 <q-tooltip>Eliminar Transacción</q-tooltip>
               </q-btn>
             </q-td>
@@ -106,20 +83,13 @@
     </q-card>
 
     <!-- Modal Bottom Sheet: Registrar Transacción -->
-    <q-dialog
-      v-model="modalTransaccion"
-      persistent
-      :position="$q.screen.lt.md ? 'bottom' : 'standard'"
-    >
+    <q-dialog v-model="modalTransaccion" persistent :position="$q.screen.lt.md ? 'bottom' : 'standard'">
       <q-card :class="$q.screen.lt.md ? 'modal-sheet' : 'modal-sheet-desktop'">
 
         <!-- Cabecera con gradiente -->
-        <div
-          class="modal-header"
-          :style="nuevaTransaccion.tipo === 'ingreso'
-            ? 'background: linear-gradient(135deg, #10b981 0%, #059669 100%)'
-            : 'background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%)'"
-        >
+        <div class="modal-header" :style="nuevaTransaccion.tipo === 'ingreso'
+          ? 'background: linear-gradient(135deg, #10b981 0%, #059669 100%)'
+          : 'background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%)'">
           <div class="drag-handle"></div>
           <div class="row items-start">
             <div>
@@ -129,15 +99,7 @@
               <div class="modal-subtitle">Completa los datos del movimiento</div>
             </div>
             <q-space />
-            <q-btn
-              icon="close"
-              flat
-              round
-              dense
-              color="white"
-              class="modal-close-btn"
-              v-close-popup
-            />
+            <q-btn icon="close" flat round dense color="white" class="modal-close-btn" v-close-popup />
           </div>
         </div>
 
@@ -147,44 +109,28 @@
 
             <!-- Pill toggle tipo -->
             <div>
-              <div class="text-caption text-grey-6 text-weight-bold q-mb-xs" style="letter-spacing:0.05em">TIPO DE MOVIMIENTO</div>
+              <div class="text-caption text-grey-6 text-weight-bold q-mb-xs" style="letter-spacing:0.05em">TIPO DE
+                MOVIMIENTO</div>
               <div class="type-toggle">
-                <div
-                  class="type-pill"
-                  :class="nuevaTransaccion.tipo === 'ingreso' ? 'active-ingreso' : ''"
-                  @click="nuevaTransaccion.tipo = 'ingreso'"
-                >
+                <div class="type-pill" :class="nuevaTransaccion.tipo === 'ingreso' ? 'active-ingreso' : ''"
+                  @click="nuevaTransaccion.tipo = 'ingreso'">
                   ↑ Ingreso
                 </div>
-                <div
-                  class="type-pill"
-                  :class="nuevaTransaccion.tipo === 'gasto' ? 'active-gasto' : ''"
-                  @click="nuevaTransaccion.tipo = 'gasto'"
-                >
+                <div class="type-pill" :class="nuevaTransaccion.tipo === 'gasto' ? 'active-gasto' : ''"
+                  @click="nuevaTransaccion.tipo = 'gasto'">
                   ↓ Gasto
                 </div>
               </div>
             </div>
 
-            <q-input
-              filled
-              v-model="nuevaTransaccion.descripcion"
-              label="Descripción"
-              :color="nuevaTransaccion.tipo === 'ingreso' ? 'positive' : 'negative'"
-              lazy-rules
-              :rules="[val => val && val.length > 0 || 'La descripción es obligatoria']"
-            />
+            <q-input filled v-model="nuevaTransaccion.descripcion" label="Descripción"
+              :color="nuevaTransaccion.tipo === 'ingreso' ? 'positive' : 'negative'" lazy-rules
+              :rules="[val => val && val.length > 0 || 'La descripción es obligatoria']" />
 
-            <q-select
-              filled
-              v-model="nuevaTransaccion.categoria"
-              :options="categoriasDisponibles"
-              label="Categoría"
-              :color="nuevaTransaccion.tipo === 'ingreso' ? 'positive' : 'negative'"
-              lazy-rules
+            <q-select filled v-model="nuevaTransaccion.categoria" :options="categoriasDisponibles" label="Categoría"
+              :color="nuevaTransaccion.tipo === 'ingreso' ? 'positive' : 'negative'" lazy-rules
               :rules="[val => val && val.length > 0 || 'La categoría es obligatoria']"
-              popup-content-class="select-popup-premium"
-            >
+              popup-content-class="select-popup-premium">
               <!-- Slot de opción seleccionada -->
               <template v-slot:selected-item="scope">
                 <div class="row items-center q-gutter-x-sm">
@@ -206,52 +152,27 @@
               </template>
             </q-select>
 
-            <q-input
-              filled
-              v-model.number="nuevaTransaccion.monto"
-              label="Monto ($)"
-              type="number"
-              :color="nuevaTransaccion.tipo === 'ingreso' ? 'positive' : 'negative'"
-              lazy-rules
-              :rules="[val => val && val > 0 || 'Ingresa un monto válido']"
-            >
+            <q-input filled v-model.number="nuevaTransaccion.monto" label="Monto ($)" type="number"
+              :color="nuevaTransaccion.tipo === 'ingreso' ? 'positive' : 'negative'" lazy-rules
+              :rules="[val => val && val > 0 || 'Ingresa un monto válido']">
               <template v-slot:prepend>
                 <span class="text-weight-bold text-grey-6">$</span>
               </template>
             </q-input>
 
-            <q-input
-              filled
-              v-model="nuevaTransaccion.fecha"
-              label="Fecha"
-              type="date"
-              stack-label
-              :color="nuevaTransaccion.tipo === 'ingreso' ? 'positive' : 'negative'"
-              lazy-rules
-              :rules="[val => val && val.length > 0 || 'La fecha es obligatoria']"
-            />
+            <q-input filled v-model="nuevaTransaccion.fecha" label="Fecha" type="date" stack-label
+              :color="nuevaTransaccion.tipo === 'ingreso' ? 'positive' : 'negative'" lazy-rules
+              :rules="[val => val && val.length > 0 || 'La fecha es obligatoria']" />
 
           </q-form>
         </div>
 
         <!-- Barra de acciones sticky -->
         <div class="modal-action-bar">
-          <q-btn
-            label="Cancelar"
-            flat
-            no-caps
-            class="btn-cancel"
-            v-close-popup
-          />
-          <q-btn
-            label="Guardar Movimiento"
-            no-caps
-            class="btn-confirm text-white"
-            :style="nuevaTransaccion.tipo === 'ingreso'
-              ? 'background: linear-gradient(135deg,#10b981,#059669)'
-              : 'background: linear-gradient(135deg,#f43f5e,#e11d48)'"
-            @click="submitTransaccion"
-          />
+          <q-btn label="Cancelar" flat no-caps class="btn-cancel" v-close-popup />
+          <q-btn label="Guardar Movimiento" no-caps class="btn-confirm text-white" :style="nuevaTransaccion.tipo === 'ingreso'
+            ? 'background: linear-gradient(135deg,#10b981,#059669)'
+            : 'background: linear-gradient(135deg,#f43f5e,#e11d48)'" @click="submitTransaccion" />
         </div>
 
       </q-card>
@@ -275,73 +196,43 @@
         <div class="modal-body q-gutter-y-md">
           <!-- Filtro Mes -->
           <div>
-            <div class="text-caption text-grey-6 text-weight-bold q-mb-xs" style="letter-spacing:0.05em">MES DEL EXTRACTO</div>
+            <div class="text-caption text-grey-6 text-weight-bold q-mb-xs" style="letter-spacing:0.05em">MES DEL
+              EXTRACTO
+            </div>
             <div class="row q-col-gutter-sm">
               <div class="col-6">
-                <q-select
-                  filled
-                  v-model="filtroExportar.mes"
-                  :options="mesesOpciones"
-                  label="Mes"
-                  emit-value
-                  map-options
-                  color="primary"
-                />
+                <q-select filled v-model="filtroExportar.mes" :options="mesesOpciones" label="Mes" emit-value
+                  map-options color="primary" />
               </div>
               <div class="col-6">
-                <q-select
-                  filled
-                  v-model="filtroExportar.anio"
-                  :options="aniosOpciones"
-                  label="Año"
-                  color="primary"
-                />
+                <q-select filled v-model="filtroExportar.anio" :options="aniosOpciones" label="Año" color="primary" />
               </div>
             </div>
           </div>
 
           <!-- Filtro Tipo -->
           <div>
-            <div class="text-caption text-grey-6 text-weight-bold q-mb-xs" style="letter-spacing:0.05em">TIPO DE MOVIMIENTOS</div>
+            <div class="text-caption text-grey-6 text-weight-bold q-mb-xs" style="letter-spacing:0.05em">TIPO DE
+              MOVIMIENTOS
+            </div>
             <div class="type-toggle">
-              <div
-                class="type-pill"
-                :class="filtroExportar.tipo === 'todos' ? 'active-ingreso' : ''"
+              <div class="type-pill" :class="filtroExportar.tipo === 'todos' ? 'active-ingreso' : ''"
                 @style="filtroExportar.tipo === 'todos' ? 'background:#e0e7ff;color:#4f46e5' : ''"
-                @click="filtroExportar.tipo = 'todos'"
-              >💼 Todos</div>
-              <div
-                class="type-pill"
-                :class="filtroExportar.tipo === 'ingreso' ? 'active-ingreso' : ''"
-                @click="filtroExportar.tipo = 'ingreso'"
-              >↑ Ingresos</div>
-              <div
-                class="type-pill"
-                :class="filtroExportar.tipo === 'gasto' ? 'active-gasto' : ''"
-                @click="filtroExportar.tipo = 'gasto'"
-              >↓ Gastos</div>
+                @click="filtroExportar.tipo = 'todos'">💼 Todos</div>
+              <div class="type-pill" :class="filtroExportar.tipo === 'ingreso' ? 'active-ingreso' : ''"
+                @click="filtroExportar.tipo = 'ingreso'">↑ Ingresos</div>
+              <div class="type-pill" :class="filtroExportar.tipo === 'gasto' ? 'active-gasto' : ''"
+                @click="filtroExportar.tipo = 'gasto'">↓ Gastos</div>
             </div>
           </div>
         </div>
 
         <div class="modal-action-bar">
           <q-btn label="Cancelar" flat no-caps class="btn-cancel" v-close-popup />
-          <q-btn
-            label="Descargar Excel"
-            icon="description"
-            no-caps
-            class="btn-confirm text-white"
-            style="background: #10b981"
-            @click="exportarExcel"
-          />
-          <q-btn
-            label="Descargar PDF"
-            icon="picture_as_pdf"
-            no-caps
-            class="btn-confirm text-white"
-            style="background: #ef4444"
-            @click="exportarPDF"
-          />
+          <q-btn label="Descargar Excel" icon="description" no-caps class="btn-confirm text-white"
+            style="background: #10b981" @click="exportarExcel" />
+          <q-btn label="Descargar PDF" icon="picture_as_pdf" no-caps class="btn-confirm text-white"
+            style="background: #ef4444" @click="exportarPDF" />
         </div>
       </q-card>
     </q-dialog>
@@ -503,7 +394,7 @@ const exportarPDF = async () => {
     doc.setFontSize(10);
     doc.text(`Ingresos Totales: $${totalIn.toLocaleString()}`, 15, 65);
     doc.text(`Gastos Totales: $${totalOut.toLocaleString()}`, 15, 72);
-    
+
     // Balance con color según resultado
     if (balance >= 0) {
       doc.setTextColor(16, 185, 129); // green
@@ -556,6 +447,8 @@ const exportarPDF = async () => {
 };
 
 const modalTransaccion = ref(false);
+const modoEdicion = ref(false);
+const transaccionEditandoId = ref(null);
 const nuevaTransaccion = ref({
   tipo: 'gasto',
   descripcion: '',
@@ -606,28 +499,28 @@ const cargarTransacciones = async () => {
 
 // Mapeos de palabras clave a Emojis (idénticos a CategoriasView)
 const EMOJI_MAP = [
-  { keys: ['comida', 'mercado', 'supermercado', 'alimento'],  emoji: '🛒' },
-  { keys: ['restaurante', 'comedor', 'cafetería', 'cafe'],    emoji: '🍽️' },
+  { keys: ['comida', 'mercado', 'supermercado', 'alimento'], emoji: '🛒' },
+  { keys: ['restaurante', 'comedor', 'cafetería', 'cafe'], emoji: '🍽️' },
   { keys: ['transporte', 'bus', 'taxi', 'metro', 'gasolina'], emoji: '🚌' },
-  { keys: ['salud', 'farmacia', 'médico', 'doctor', 'clinica'],emoji: '💊' },
-  { keys: ['educación', 'colegio', 'universidad', 'curso'],   emoji: '📚' },
-  { keys: ['ropa', 'moda', 'vestimenta', 'zapatos'],          emoji: '👗' },
-  { keys: ['vivienda', 'alquiler', 'arriendo', 'hogar'],      emoji: '🏠' },
-  { keys: ['tecnología', 'tecno', 'computadora', 'celular'],  emoji: '💻' },
-  { keys: ['deporte', 'gym', 'gimnasio', 'ejercicio'],        emoji: '💪' },
+  { keys: ['salud', 'farmacia', 'médico', 'doctor', 'clinica'], emoji: '💊' },
+  { keys: ['educación', 'colegio', 'universidad', 'curso'], emoji: '📚' },
+  { keys: ['ropa', 'moda', 'vestimenta', 'zapatos'], emoji: '👗' },
+  { keys: ['vivienda', 'alquiler', 'arriendo', 'hogar'], emoji: '🏠' },
+  { keys: ['tecnología', 'tecno', 'computadora', 'celular'], emoji: '💻' },
+  { keys: ['deporte', 'gym', 'gimnasio', 'ejercicio'], emoji: '💪' },
   { keys: ['mascotas', 'mascota', 'perro', 'gato', 'veterinario'], emoji: '🐾' },
-  { keys: ['viaje', 'viajes', 'hotel', 'vuelo', 'avion'],     emoji: '✈️' },
-  { keys: ['servicios', 'servicio', 'agua', 'luz', 'internet'],emoji: '🧾' },
-  { keys: ['entretenimiento', 'ocio', 'cine', 'juego'],       emoji: '🎬' },
+  { keys: ['viaje', 'viajes', 'hotel', 'vuelo', 'avion'], emoji: '✈️' },
+  { keys: ['servicios', 'servicio', 'agua', 'luz', 'internet'], emoji: '🧾' },
+  { keys: ['entretenimiento', 'ocio', 'cine', 'juego'], emoji: '🎬' },
   { keys: ['suscripción', 'suscripciones', 'streaming', 'netflix'], emoji: '📱' },
-  { keys: ['salario', 'nómina', 'nomina', 'sueldo'],          emoji: '💼' },
-  { keys: ['freelance', 'proyecto', 'trabajo independiente'],  emoji: '🧑‍💻' },
-  { keys: ['inversión', 'inversiones', 'ahorro', 'bolsa'],    emoji: '📈' },
-  { keys: ['venta', 'ventas', 'comercio'],                    emoji: '🏷️' },
-  { keys: ['bonificación', 'bono', 'prima', 'extra'],         emoji: '⭐' },
-  { keys: ['regalo', 'obsequio'],                             emoji: '🎁' },
-  { keys: ['seguro', 'poliza', 'póliza'],                     emoji: '🛡️' },
-  { keys: ['deuda', 'préstamo', 'prestamo', 'crédito'],       emoji: '💳' },
+  { keys: ['salario', 'nómina', 'nomina', 'sueldo'], emoji: '💼' },
+  { keys: ['freelance', 'proyecto', 'trabajo independiente'], emoji: '🧑‍💻' },
+  { keys: ['inversión', 'inversiones', 'ahorro', 'bolsa'], emoji: '📈' },
+  { keys: ['venta', 'ventas', 'comercio'], emoji: '🏷️' },
+  { keys: ['bonificación', 'bono', 'prima', 'extra'], emoji: '⭐' },
+  { keys: ['regalo', 'obsequio'], emoji: '🎁' },
+  { keys: ['seguro', 'poliza', 'póliza'], emoji: '🛡️' },
+  { keys: ['deuda', 'préstamo', 'prestamo', 'crédito'], emoji: '💳' },
 ];
 
 const ICON_NAME_MAP = {
@@ -687,6 +580,8 @@ const cargarCategorias = async (tipo) => {
 };
 
 const abrirModal = () => {
+  modoEdicion.value = false;
+  transaccionEditandoId.value = null;
   nuevaTransaccion.value = {
     tipo: 'gasto',
     descripcion: '',
@@ -694,6 +589,20 @@ const abrirModal = () => {
     monto: null,
     fecha: new Date().toISOString().substring(0, 10)
   };
+  modalTransaccion.value = true;
+};
+
+const abrirEditar = (transaccion) => {
+  modoEdicion.value = true;
+  transaccionEditandoId.value = transaccion._id;
+  nuevaTransaccion.value = {
+    tipo: transaccion.tipo,
+    descripcion: transaccion.descripcion,
+    categoria: transaccion.categoria,
+    monto: transaccion.monto,
+    fecha: new Date(transaccion.fecha).toISOString().substring(0, 10)
+  };
+  cargarCategorias(transaccion.tipo);
   modalTransaccion.value = true;
 };
 
@@ -718,8 +627,8 @@ const submitTransaccion = async () => {
 
 const guardarTransaccion = async () => {
   try {
-    $q.loading.show({ message: 'Registrando movimiento...' });
-    
+    $q.loading.show({ message: modoEdicion.value ? 'Actualizando movimiento...' : 'Registrando movimiento...' });
+
     // Ajustar la fecha para evitar corrimiento por diferencia de huso horario
     let fechaFinal = nuevaTransaccion.value.fecha;
     if (fechaFinal) {
@@ -730,16 +639,15 @@ const guardarTransaccion = async () => {
       }
     }
 
-    const res = await transaccionService.crear({
-      ...nuevaTransaccion.value,
-      fecha: fechaFinal
-    });
+    const res = modoEdicion.value
+      ? await transaccionService.editar(transaccionEditandoId.value, { ...nuevaTransaccion.value, fecha: fechaFinal })
+      : await transaccionService.crear({ ...nuevaTransaccion.value, fecha: fechaFinal });
 
     if (res?.success) {
       modalTransaccion.value = false;
       $q.notify({
         type: 'positive',
-        message: 'Transacción registrada con éxito.',
+        message: modoEdicion.value ? 'Transacción actualizada con éxito.' : 'Transacción registrada con éxito.',
         position: 'top'
       });
       await cargarTransacciones();

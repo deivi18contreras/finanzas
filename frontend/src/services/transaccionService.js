@@ -1,4 +1,4 @@
-import { getData, postData, deleteData } from "./apiService.js";
+import { getData, postData, deleteData,putData } from "./apiService.js";
 
 export const transaccionService = {
   async crear(datos) {
@@ -9,7 +9,11 @@ export const transaccionService = {
     return await getData("/transaction/historial", { anio, mes });
   },
 
-  async eliminar(id) {
+  async editar(id, datos) {
+    return await putData(`/transaction/${id}`, datos);
+},
+
+async eliminar(id) {
     return await deleteData(`/transaction/${id}`);
-  }
+}
 };

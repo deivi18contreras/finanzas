@@ -43,6 +43,11 @@ const routes = [
                 path: 'presupuestos',
                 name: 'Presupuestos',
                 component: () => import('../views/PresupuestoView.vue')
+            },
+            {
+                path: 'gastos-fijos',
+                name: 'GastosFijos',
+                component: () => import('../views/GastosFijosView.vue')
             }
         ]
     }
@@ -54,16 +59,14 @@ const router = createRouter({
     routes
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from) => {
     const authStore = useAuthStore();
     const autenticado = authStore.estaAutenticado;
 
     if (to.meta.requiereAuth && !autenticado) {
-        next({ name: 'Login' });
+        return { name: 'Login' };
     } else if (!to.meta.requiereAuth && autenticado && (to.name === 'Login' || to.name === 'Register')) {
-        next({ name: 'Dashboard' });
-    } else {
-        next();
+        return { name: 'Dashboard' };
     }
 });
 

@@ -63,9 +63,9 @@ export const registrarAbono = async (req, res) => {
             return res.status(400).json({ msg: `El abono supera el saldo pendiente, Solo debes abonar máximo $${saldoPendiente}` })
         }
 
-        const nuevaTransaccion = await Transaccion({
+        const nuevaTransaccion = new Transaccion({
             usuarioId,
-            tipo: 'deudas',
+            tipo: deuda.tipo === 'por_pagar' ? 'gasto' : 'ingreso',
             monto: montoAbonado,
             categoria: deuda.tipo === 'por_pagar' ? 'pago Deuda' : 'Cobro Deuda',
             descripcion: `Abono a la cuenta de: ${deuda.contacto}`,

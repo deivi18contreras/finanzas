@@ -90,10 +90,45 @@ export const eliminarTransaccion = async (req, res) => {
         if (!transaccion) {
             return res.status(404).json({ msg: 'Transacción no encontrada' });
         }
+        if (transaccion.usuarioId.toString() !== req.usuario._id.toString()) {
+            return res.status(403).json({ msg: 'No tienes permiso para eliminar este movimiento' });
+        }
         await Transaccion.findByIdAndDelete(id);
         res.json({ success: true, msg: 'Movimiento eliminado correctamente' });
     } catch (error) {
         console.error('Error al eliminar transacción:', error);
         res.status(500).json({ msg: 'Error al eliminar el movimiento' });
+    }
+};
+
+export const editarTransaccion = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { tipo, monto, categoria, descripcion, fecha } = req.body;
+
+        const transaccion = await Transaccion.findById(id);
+        if (!transaccion) {
+            return res.status(404).json({ msg: 'Transacción no encontrada' });
+        }
+        if (transaccion.usuarioId.toString() !== req.usuario._id.toString()) {
+            return res.status(403).json({ msg: 'No tienes permiso para editar este movimiento' });
+        }
+
+        transaccion.tipo = tipo || transaccion.tipo;
+        transaccion.monto = monto || transaccion.monto;
+        transaccion.categoria = categoria || transaccion.categoria;
+        transaccion.descripcion = descripcion ?? transaccion.descripcion;
+        transaccion.fecha = fecha || transaccion.fecha;
+
+        await transaccion.save();
+
+        res.json({
+            success: true,
+            msg: 'Movimiento actualizado correctamente',
+            transaccion
+        });
+    } catch (error) {
+        console.error('Error al editar transacción:', error);
+        res.status(500).json({ msg: 'Error al actualizar el movimiento' });
     }
 };

@@ -5,14 +5,8 @@
     <q-header class="bg-gradient-dark text-white shadow-2">
       <q-toolbar class="q-px-md">
         <!-- Hamburger solo en desktop -->
-        <q-btn
-          v-if="$q.screen.gt.sm"
-          flat dense round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-          class="q-mr-sm"
-        />
+        <q-btn v-if="$q.screen.gt.sm" flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer"
+          class="q-mr-sm" />
 
         <q-toolbar-title class="text-weight-bold font-heading text-h6 row items-center">
           <q-icon name="query_stats" size="28px" class="q-mr-xs text-secondary" />
@@ -22,7 +16,8 @@
         <div class="row items-center q-gutter-sm">
           <!-- Badge de usuario -->
           <div class="row items-center q-gutter-sm user-badge q-px-sm q-py-xs">
-            <q-avatar color="primary" text-color="white" class="text-weight-bold text-caption font-heading shadow-1" size="32px">
+            <q-avatar color="primary" text-color="white" class="text-weight-bold text-caption font-heading shadow-1"
+              size="32px">
               {{ authStore.inicialesUsuario }}
             </q-avatar>
             <span class="gt-xs text-weight-bold text-body2">
@@ -31,13 +26,7 @@
           </div>
 
           <!-- Logout siempre visible en header -->
-          <q-btn
-            flat round dense
-            icon="logout"
-            color="white"
-            aria-label="Cerrar Sesión"
-            @click="handleLogout"
-          >
+          <q-btn flat round dense icon="logout" color="white" aria-label="Cerrar Sesión" @click="handleLogout">
             <q-tooltip anchor="bottom right" self="top right">Cerrar Sesión</q-tooltip>
           </q-btn>
         </div>
@@ -45,17 +34,11 @@
     </q-header>
 
     <!-- ─── DRAWER LATERAL (solo desktop) ─── -->
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-      class="bg-sidebar"
-      :width="260"
-      :breakpoint="768"
-    >
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-sidebar" :width="260" :breakpoint="768">
       <q-list class="q-py-md">
         <div class="q-px-md q-mb-md">
-          <q-item-label header class="text-grey-5 text-weight-bolder text-uppercase tracking-wider text-caption q-pa-none">
+          <q-item-label header
+            class="text-grey-5 text-weight-bolder text-uppercase tracking-wider text-caption q-pa-none">
             Navegación Principal
           </q-item-label>
         </div>
@@ -65,7 +48,8 @@
           <q-item-section><q-item-label>Mi Dinero</q-item-label></q-item-section>
         </q-item>
 
-        <q-item clickable v-ripple to="/transacciones" active-class="menu-item-active" class="menu-item q-mx-sm q-mb-xs">
+        <q-item clickable v-ripple to="/transacciones" active-class="menu-item-active"
+          class="menu-item q-mx-sm q-mb-xs">
           <q-item-section avatar><q-icon name="receipt_long" /></q-item-section>
           <q-item-section><q-item-label>Movimientos</q-item-label></q-item-section>
         </q-item>
@@ -83,6 +67,11 @@
         <q-item clickable v-ripple to="/presupuestos" active-class="menu-item-active" class="menu-item q-mx-sm q-mb-xs">
           <q-item-section avatar><q-icon name="track_changes" /></q-item-section>
           <q-item-section><q-item-label>Control</q-item-label></q-item-section>
+        </q-item>
+
+        <q-item clickable v-ripple to="/gastos-fijos" active-class="menu-item-active" class="menu-item q-mx-sm q-mb-xs">
+          <q-item-section avatar><q-icon name="repeat" /></q-item-section>
+          <q-item-section><q-item-label>Gastos Fijos</q-item-label></q-item-section>
         </q-item>
       </q-list>
     </q-drawer>
@@ -131,6 +120,13 @@
           </div>
         </router-link>
 
+        <router-link to="/gastos-fijos" custom v-slot="{ isActive, navigate }">
+          <div class="tab-item" :class="{ 'tab-active': isActive }" @click="navigate">
+            <q-icon name="repeat" size="22px" />
+            <span class="tab-label">Fijos</span>
+          </div>
+        </router-link>
+
       </div>
     </q-footer>
 
@@ -168,8 +164,13 @@ const handleLogout = () => {
 </script>
 
 <style scoped>
-.bg-sidebar { background-color: #ffffff; }
-.bg-app-container { background-color: #f8fafc; }
+.bg-sidebar {
+  background-color: #ffffff;
+}
+
+.bg-app-container {
+  background-color: #f8fafc;
+}
 
 /* Padding extra en móvil para no quedar detrás del tab bar */
 .mobile-content {
@@ -177,14 +178,19 @@ const handleLogout = () => {
 }
 
 .user-badge {
-  background: rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 30px;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.2s ease;
 }
-.user-badge:hover { background: rgba(255,255,255,0.25); }
 
-.tracking-wider { letter-spacing: 0.075em; }
+.user-badge:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.tracking-wider {
+  letter-spacing: 0.075em;
+}
 
 /* ─── Sidebar items ─── */
 .menu-item {
@@ -193,21 +199,32 @@ const handleLogout = () => {
   font-weight: 500;
   transition: all 0.2s ease;
 }
-.menu-item .q-icon { color: #64748b; transition: all 0.2s ease; }
-.menu-item:hover { background-color: #f1f5f9; color: #334155; }
+
+.menu-item .q-icon {
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+.menu-item:hover {
+  background-color: #f1f5f9;
+  color: #334155;
+}
 
 .menu-item-active {
   background-color: #e0e7ff !important;
   color: #4f46e5 !important;
   font-weight: 700;
 }
-.menu-item-active .q-icon { color: #4f46e5 !important; }
+
+.menu-item-active .q-icon {
+  color: #4f46e5 !important;
+}
 
 /* ─── Bottom Tab Bar ─── */
 .bottom-tab-bar {
   background: #ffffff;
   border-top: 1px solid #e2e8f0;
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
   padding: 0;
   height: auto;
 }
@@ -216,7 +233,8 @@ const handleLogout = () => {
   display: flex;
   align-items: stretch;
   height: 64px;
-  padding-bottom: env(safe-area-inset-bottom, 0px); /* iPhone notch */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  /* iPhone notch */
 }
 
 .tab-item {

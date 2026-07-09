@@ -12,7 +12,7 @@ const UsuarioSchema = new Schema(
         email: {
             type: String,
             required: [true, 'El correo es obligatorio'],
-            uniqued: true,
+            unique: true,
             lowercase: true,
             trim: true
         },

@@ -34,7 +34,7 @@ const DeudaSchema = new Schema(
         estado: {
             type: String,
             required: true,
-            enum: ['pendiente', 'liquida'],
+            enum: ['pendiente', 'liquidada'],
             default: 'pendiente'
         },
         fechaLimite: {

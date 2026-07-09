@@ -8,8 +8,12 @@ const PresupuestoSchema = new Schema (
             ref: 'Usuario',
             required: true
         },
-        Categoria:{
+        categoria:{
             type: String,
+            required: true
+        },
+        anio:{
+            type: Number,
             required: true
         },
         montoLimite:{

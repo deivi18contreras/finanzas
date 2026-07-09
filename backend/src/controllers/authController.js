@@ -45,7 +45,7 @@ export const loginUsuario = async (req, res) => {
 
         const token = jwt.sign(
             { id: usuarioEncontrado._id },
-            process.env.JWT_SECRET || MiPalabraUltraSecretaYEscondidaDeFinanzas1826,
+            process.env.JWT_SECRET || 'MiPalabraUltraSecretaYEscondidaDeFinanzas1826',
             { expiresIn: '18d' }
         )
         return res.status(200).json({

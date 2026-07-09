@@ -49,6 +49,7 @@ export const registrarAbono = async (req, res) => {
     try {
         const { deudaId } = req.params;
         const { montoAbonado, usuarioId } = req.body;
+        const uId = usuarioId || (req.usuario ? req.usuario._id : null);
 
         const deuda = await Deuda.findById(deudaId);
         if (!deuda) {
@@ -64,10 +65,10 @@ export const registrarAbono = async (req, res) => {
         }
 
         const nuevaTransaccion = new Transaccion({
-            usuarioId,
+            usuarioId: uId,
             tipo: deuda.tipo === 'por_pagar' ? 'gasto' : 'ingreso',
             monto: montoAbonado,
-            categoria: deuda.tipo === 'por_pagar' ? 'pago Deuda' : 'Cobro Deuda',
+            categoria: deuda.tipo === 'por_pagar' ? 'Pago Deuda' : 'Cobro Deuda',
             descripcion: `Abono a la cuenta de: ${deuda.contacto}`,
             fecha: new Date()
         })

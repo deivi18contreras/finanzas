@@ -511,8 +511,8 @@ const cargarTransacciones = async () => {
     const res = await transaccionService.obtenerPorMes(anio, mes);
     if (res?.success) {
       transacciones.value = res.transacciones || [];
-      totalIngresos.value = res.resumen?.ingresos || 0;
-      totalGastos.value = res.resumen?.gastos || 0;
+      totalIngresos.value = res.resumenMes?.totalIngresos || 0;
+      totalGastos.value = res.resumenMes?.totalGastos || 0;
     }
   } catch (error) {
     console.error('Error al cargar transacciones:', error);

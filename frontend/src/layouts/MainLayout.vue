@@ -36,42 +36,56 @@
     <!-- ─── DRAWER LATERAL (solo desktop) ─── -->
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-sidebar" :width="260" :breakpoint="768">
       <q-list class="q-py-md">
-        <div class="q-px-md q-mb-md">
-          <q-item-label header
-            class="text-grey-5 text-weight-bolder text-uppercase tracking-wider text-caption q-pa-none">
-            Navegación Principal
+        <!-- Grupo 1: Finanzas Diarias -->
+        <div class="q-px-md q-mb-xs">
+          <q-item-label header class="text-grey-5 text-weight-bolder text-uppercase tracking-wider text-caption q-pa-none">
+            Finanzas Diarias
           </q-item-label>
         </div>
 
         <q-item clickable v-ripple to="/" exact active-class="menu-item-active" class="menu-item q-mx-sm q-mb-xs">
-          <q-item-section avatar><q-icon name="dashboard" /></q-item-section>
+          <q-item-section avatar><q-icon name="dashboard" class="material-icons-outlined" /></q-item-section>
           <q-item-section><q-item-label>Mi Dinero</q-item-label></q-item-section>
         </q-item>
 
-        <q-item clickable v-ripple to="/transacciones" active-class="menu-item-active"
-          class="menu-item q-mx-sm q-mb-xs">
-          <q-item-section avatar><q-icon name="receipt_long" /></q-item-section>
+        <q-item clickable v-ripple to="/transacciones" active-class="menu-item-active" class="menu-item q-mx-sm q-mb-xs">
+          <q-item-section avatar><q-icon name="receipt_long" class="material-icons-outlined" /></q-item-section>
           <q-item-section><q-item-label>Movimientos</q-item-label></q-item-section>
         </q-item>
 
-        <q-item clickable v-ripple to="/deudas" active-class="menu-item-active" class="menu-item q-mx-sm q-mb-xs">
-          <q-item-section avatar><q-icon name="payment" /></q-item-section>
-          <q-item-section><q-item-label>Deudas</q-item-label></q-item-section>
-        </q-item>
-
         <q-item clickable v-ripple to="/categorias" active-class="menu-item-active" class="menu-item q-mx-sm q-mb-xs">
-          <q-item-section avatar><q-icon name="category" /></q-item-section>
+          <q-item-section avatar><q-icon name="category" class="material-icons-outlined" /></q-item-section>
           <q-item-section><q-item-label>Categorías</q-item-label></q-item-section>
         </q-item>
 
-        <q-item clickable v-ripple to="/presupuestos" active-class="menu-item-active" class="menu-item q-mx-sm q-mb-xs">
-          <q-item-section avatar><q-icon name="track_changes" /></q-item-section>
-          <q-item-section><q-item-label>Control</q-item-label></q-item-section>
+        <!-- Separador elegante -->
+        <q-separator class="q-my-md q-mx-md" style="background-color: rgba(0,0,0,0.04)" />
+
+        <!-- Grupo 2: Planificación -->
+        <div class="q-px-md q-mb-xs">
+          <q-item-label header class="text-grey-5 text-weight-bolder text-uppercase tracking-wider text-caption q-pa-none">
+            Planificación y Metas
+          </q-item-label>
+        </div>
+
+        <q-item clickable v-ripple to="/deudas" active-class="menu-item-active" class="menu-item q-mx-sm q-mb-xs">
+          <q-item-section avatar><q-icon name="payment" class="material-icons-outlined" /></q-item-section>
+          <q-item-section><q-item-label>Deudas</q-item-label></q-item-section>
         </q-item>
 
         <q-item clickable v-ripple to="/gastos-fijos" active-class="menu-item-active" class="menu-item q-mx-sm q-mb-xs">
-          <q-item-section avatar><q-icon name="repeat" /></q-item-section>
+          <q-item-section avatar><q-icon name="sync" class="material-icons-outlined" /></q-item-section>
           <q-item-section><q-item-label>Gastos Fijos</q-item-label></q-item-section>
+        </q-item>
+
+        <q-item clickable v-ripple to="/ahorros" active-class="menu-item-active" class="menu-item q-mx-sm q-mb-xs">
+          <q-item-section avatar><q-icon name="savings" class="material-icons-outlined" /></q-item-section>
+          <q-item-section><q-item-label>Ahorros</q-item-label></q-item-section>
+        </q-item>
+
+        <q-item clickable v-ripple to="/presupuestos" active-class="menu-item-active" class="menu-item q-mx-sm q-mb-xs">
+          <q-item-section avatar><q-icon name="track_changes" class="material-icons-outlined" /></q-item-section>
+          <q-item-section><q-item-label>Control</q-item-label></q-item-section>
         </q-item>
       </q-list>
     </q-drawer>
@@ -87,43 +101,50 @@
 
         <router-link to="/" custom v-slot="{ isActive, navigate }">
           <div class="tab-item" :class="{ 'tab-active': isActive }" @click="navigate">
-            <q-icon name="dashboard" size="22px" />
+            <q-icon name="dashboard" size="20px" />
             <span class="tab-label">Mi Dinero</span>
           </div>
         </router-link>
 
         <router-link to="/transacciones" custom v-slot="{ isActive, navigate }">
           <div class="tab-item" :class="{ 'tab-active': isActive }" @click="navigate">
-            <q-icon name="receipt_long" size="22px" />
+            <q-icon name="receipt_long" size="20px" />
             <span class="tab-label">Movimientos</span>
           </div>
         </router-link>
 
         <router-link to="/deudas" custom v-slot="{ isActive, navigate }">
           <div class="tab-item" :class="{ 'tab-active': isActive }" @click="navigate">
-            <q-icon name="payment" size="22px" />
+            <q-icon name="payment" size="20px" />
             <span class="tab-label">Deudas</span>
           </div>
         </router-link>
 
         <router-link to="/categorias" custom v-slot="{ isActive, navigate }">
           <div class="tab-item" :class="{ 'tab-active': isActive }" @click="navigate">
-            <q-icon name="category" size="22px" />
+            <q-icon name="category" size="20px" />
             <span class="tab-label">Categorías</span>
           </div>
         </router-link>
 
         <router-link to="/presupuestos" custom v-slot="{ isActive, navigate }">
           <div class="tab-item" :class="{ 'tab-active': isActive }" @click="navigate">
-            <q-icon name="track_changes" size="22px" />
+            <q-icon name="track_changes" size="20px" />
             <span class="tab-label">Control</span>
           </div>
         </router-link>
 
         <router-link to="/gastos-fijos" custom v-slot="{ isActive, navigate }">
           <div class="tab-item" :class="{ 'tab-active': isActive }" @click="navigate">
-            <q-icon name="repeat" size="22px" />
+            <q-icon name="repeat" size="20px" />
             <span class="tab-label">Fijos</span>
+          </div>
+        </router-link>
+
+        <router-link to="/ahorros" custom v-slot="{ isActive, navigate }">
+          <div class="tab-item" :class="{ 'tab-active': isActive }" @click="navigate">
+            <q-icon name="savings" size="20px" />
+            <span class="tab-label">Ahorros</span>
           </div>
         </router-link>
 

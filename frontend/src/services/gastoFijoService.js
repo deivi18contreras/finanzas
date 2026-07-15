@@ -15,9 +15,13 @@ export const gastoFijoService = {
 
   async eliminar(id) {
     return await deleteData(`/gastos-fijos/${id}`);
+  }, 
+  async registrarUno(id) {
+    return await postData(`/gastos-fijos/${id}/registrar`, {});
   },
 
   async registrarTodosEsteMes() {
     return await postData("/gastos-fijos/registrar-mes", {});
-  }
+  },
+   
 };

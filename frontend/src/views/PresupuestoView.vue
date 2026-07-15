@@ -6,41 +6,47 @@
         <p class="text-subtitle2 text-grey-6 q-my-none">Establece límites de gastos y escanea tus facturas físicas.</p>
       </div>
       <div class="q-gutter-sm">
-        <q-btn color="secondary" icon="document_scanner" label="Escanear Recibo" class="bg-gradient-secondary text-white text-weight-bold" no-caps @click="abrirOcr" />
-        <q-btn color="primary" icon="add" label="Asignar Tope" class="bg-gradient-primary text-white text-weight-bold" no-caps @click="abrirPresupuesto" />
+        <q-btn color="secondary" icon="document_scanner" label="Escanear Recibo"
+          class="bg-gradient-secondary text-white text-weight-bold" no-caps @click="abrirOcr" />
+        <q-btn color="primary" icon="add" label="Asignar Tope" class="bg-gradient-primary text-white text-weight-bold"
+          no-caps @click="abrirPresupuesto" />
       </div>
     </div>
 
     <!-- Tarjetas de progreso -->
     <div class="row q-col-gutter-lg">
-      <div v-for="p in presupuestos" :key="p.id" class="col-12 col-sm-6 col-md-4">
+      <div v-for="p in presupuestos" :key="p._id" class="col-12 col-sm-6 col-md-4">
         <q-card class="shadow-hover bg-white" style="border-radius:20px">
           <q-card-section class="q-pa-lg">
             <div class="row justify-between items-center q-mb-md">
-              <div class="text-subtitle1 text-weight-bold font-heading" style="color:#1e293b">{{ p.categoria }}</div>
-              <q-btn icon="delete" color="negative" flat round dense size="sm" @click="confirmarEliminarPresupuesto(p.id)">
-                <q-tooltip>Eliminar</q-tooltip>
-              </q-btn>
+              <div class="text-subtitle1 text-weight-bold font-heading" style="color:#1e293b">
+                <span>{{ resolverEmojiPorNombre(p.categoria) }}</span>
+                <span class="q-ml-xs">{{ p.categoria }}</span>
+              </div>
+              <div class="row q-gutter-xs">
+                <q-btn icon="edit" color="primary" flat round dense size="sm" @click="abrirEditar(p)">
+                  <q-tooltip>Editar Límite</q-tooltip>
+                </q-btn>
+                <q-btn icon="delete" color="negative" flat round dense size="sm" @click="confirmarEliminarPresupuesto(p._id)">
+                  <q-tooltip>Eliminar</q-tooltip>
+                </q-btn>
+              </div>
             </div>
             <div class="row justify-between text-caption text-grey-7 q-mb-xs">
-              <span>Consumido: <strong style="color:#1e293b">${{ p.consumido.toLocaleString() }}</strong></span>
-              <span>Límite: <strong style="color:#1e293b">${{ p.limite.toLocaleString() }}</strong></span>
+              <span>Consumido: <strong style="color:#1e293b">${{ p.totalGastado.toLocaleString() }}</strong></span>
+              <span>Límite: <strong style="color:#1e293b">${{ p.montoLimite.toLocaleString() }}</strong></span>
             </div>
-            <q-linear-progress
-              :value="p.limite > 0 ? (p.consumido / p.limite) : 0"
-              :color="p.consumido > p.limite ? 'negative' : 'primary'"
-              size="12px" style="border-radius:6px"
-            />
-            <div v-if="p.consumido > p.limite" class="text-caption text-negative text-weight-bolder q-mt-sm row items-center">
+            <q-linear-progress :value="p.montoLimite > 0 ? (p.totalGastado / p.montoLimite) : 0"
+              :color="p.superado ? 'negative' : 'primary'" size="12px" style="border-radius:6px" />
+            <div v-if="p.superado" class="text-caption text-negative text-weight-bolder q-mt-sm row items-center">
               <q-icon name="warning" size="14px" class="q-mr-xs" />¡Has superado el límite!
             </div>
             <div v-else class="text-caption text-grey-5 q-mt-sm">
-              Quedan ${{ Math.max(0, p.limite - p.consumido).toLocaleString() }} disponibles
+              Quedan ${{ p.saldoDisponible.toLocaleString() }} disponibles
             </div>
           </q-card-section>
         </q-card>
       </div>
-
       <div v-if="presupuestos.length === 0" class="col-12 text-center q-py-xl text-grey-5">
         <q-avatar size="80px" color="indigo-50" class="q-mb-md">
           <q-icon name="donut_large" size="48px" color="primary" />
@@ -58,8 +64,8 @@
           <div class="drag-handle"></div>
           <div class="row items-start">
             <div>
-              <div class="modal-title">🎯 Configurar Límite</div>
-              <div class="modal-subtitle">Fija un tope de gasto para esta categoría</div>
+              <div class="modal-title">🎯 {{ modoEdicion ? 'Editar Límite' : 'Configurar Límite' }}</div>
+              <div class="modal-subtitle">{{ modoEdicion ? 'Modifica el tope de gasto actual' : 'Fija un tope de gasto para esta categoría' }}</div>
             </div>
             <q-space />
             <q-btn icon="close" flat round dense color="white" class="modal-close-btn" v-close-popup />
@@ -68,16 +74,11 @@
 
         <div class="modal-body">
           <q-form ref="formPresupuesto" class="q-gutter-y-sm">
-            <q-select
-              filled
-              v-model="nuevoPresupuesto.categoria"
-              :options="categoriasGasto"
-              label="Selecciona Categoría"
-              color="primary"
-              lazy-rules
+            <q-select filled v-model="nuevoPresupuesto.categoria" :options="categoriasGasto"
+              label="Selecciona Categoría" color="primary" lazy-rules
               :rules="[val => val && val.length > 0 || 'Selecciona una categoría']"
               popup-content-class="select-popup-premium"
-            >
+              :disable="modoEdicion">
               <!-- Slot de opción seleccionada -->
               <template v-slot:selected-item="scope">
                 <div class="row items-center q-gutter-x-sm">
@@ -98,15 +99,8 @@
                 </q-item>
               </template>
             </q-select>
-            <q-input
-              filled
-              v-model.number="nuevoPresupuesto.montoLimite"
-              type="number"
-              label="Monto Límite ($)"
-              color="primary"
-              lazy-rules
-              :rules="[val => val && val > 0 || 'Ingresa un monto válido']"
-            >
+            <q-input filled v-model.number="nuevoPresupuesto.montoLimite" type="number" label="Monto Límite ($)"
+              color="primary" lazy-rules :rules="[val => val && val > 0 || 'Ingresa un monto válido']">
               <template v-slot:prepend>
                 <span class="text-weight-bold text-grey-6">$</span>
               </template>
@@ -116,13 +110,8 @@
 
         <div class="modal-action-bar">
           <q-btn label="Cancelar" flat no-caps class="btn-cancel" v-close-popup />
-          <q-btn
-            label="Fijar Presupuesto"
-            no-caps
-            class="btn-confirm text-white"
-            style="background: linear-gradient(135deg,#6366f1,#4f46e5)"
-            @click="submitPresupuesto"
-          />
+          <q-btn :label="modoEdicion ? 'Actualizar Límite' : 'Fijar Presupuesto'" no-caps class="btn-confirm text-white"
+            style="background: linear-gradient(135deg,#6366f1,#4f46e5)" @click="submitPresupuesto" />
         </div>
 
       </q-card>
@@ -152,18 +141,15 @@
               <div class="text-weight-bold text-caption" style="color:#1e293b">{{ archivoImagen.name }}</div>
               <div class="text-caption text-grey-5">Listo para procesar</div>
             </div>
-            <q-btn icon="close" flat round dense size="xs" color="grey-5" class="q-ml-auto" @click="archivoImagen = null" />
+            <q-btn icon="close" flat round dense size="xs" color="grey-5" class="q-ml-auto"
+              @click="archivoImagen = null" />
           </div>
 
           <!-- Sin imagen: botones de cámara / galería -->
           <div v-else class="q-gutter-sm q-mb-md">
 
             <!-- Botón cámara (solo en móvil) -->
-            <div
-              v-if="$q.screen.lt.md"
-              class="ocr-option-btn"
-              @click="triggerCamera"
-            >
+            <div v-if="$q.screen.lt.md" class="ocr-option-btn" @click="triggerCamera">
               <div class="ocr-option-icon" style="background:#d1fae5">
                 <q-icon name="photo_camera" color="positive" size="28px" />
               </div>
@@ -188,22 +174,11 @@
 
           <!-- Inputs ocultos -->
           <!-- Input cámara nativa (capture) -->
-          <input
-            ref="cameraInputRef"
-            type="file"
-            accept="image/*"
-            capture="environment"
-            style="display:none"
-            @change="onFileChange"
-          />
+          <input ref="cameraInputRef" type="file" accept="image/*" capture="environment" style="display:none"
+            @change="onFileChange" />
           <!-- Input galería -->
-          <input
-            ref="galleryInputRef"
-            type="file"
-            accept=".jpg,.jpeg,.png"
-            style="display:none"
-            @change="onFileChange"
-          />
+          <input ref="galleryInputRef" type="file" accept=".jpg,.jpeg,.png" style="display:none"
+            @change="onFileChange" />
 
           <p class="text-caption text-grey-5 text-center q-mb-none">
             La IA extraerá automáticamente el comercio, monto y categoría del recibo.
@@ -212,15 +187,9 @@
 
         <div class="modal-action-bar">
           <q-btn label="Cancelar" flat no-caps class="btn-cancel" v-close-popup />
-          <q-btn
-            label="Procesar con IA"
-            icon="psychology"
-            no-caps
-            class="btn-confirm text-white"
-            style="background: linear-gradient(135deg,#10b981,#0ea5e9)"
-            :loading="procesando"
-            @click="escanearDocumento"
-          />
+          <q-btn label="Procesar con IA" icon="psychology" no-caps class="btn-confirm text-white"
+            style="background: linear-gradient(135deg,#10b981,#0ea5e9)" :loading="procesando"
+            @click="escanearDocumento" />
         </div>
 
       </q-card>
@@ -269,71 +238,15 @@ const cargarPresupuestos = async () => {
   }
 };
 
-// Mapeos de palabras clave a Emojis (idénticos a CategoriasView)
-const EMOJI_MAP = [
-  { keys: ['comida', 'mercado', 'supermercado', 'alimento'],  emoji: '🛒' },
-  { keys: ['restaurante', 'comedor', 'cafetería', 'cafe'],    emoji: '🍽️' },
-  { keys: ['transporte', 'bus', 'taxi', 'metro', 'gasolina'], emoji: '🚌' },
-  { keys: ['salud', 'farmacia', 'médico', 'doctor', 'clinica'],emoji: '💊' },
-  { keys: ['educación', 'colegio', 'universidad', 'curso'],   emoji: '📚' },
-  { keys: ['ropa', 'moda', 'vestimenta', 'zapatos'],          emoji: '👗' },
-  { keys: ['vivienda', 'alquiler', 'arriendo', 'hogar'],      emoji: '🏠' },
-  { keys: ['tecnología', 'tecno', 'computadora', 'celular'],  emoji: '💻' },
-  { keys: ['deporte', 'gym', 'gimnasio', 'ejercicio'],        emoji: '💪' },
-  { keys: ['mascotas', 'mascota', 'perro', 'gato', 'veterinario'], emoji: '🐾' },
-  { keys: ['viaje', 'viajes', 'hotel', 'vuelo', 'avion'],     emoji: '✈️' },
-  { keys: ['servicios', 'servicio', 'agua', 'luz', 'internet'],emoji: '🧾' },
-  { keys: ['entretenimiento', 'ocio', 'cine', 'juego'],       emoji: '🎬' },
-  { keys: ['suscripción', 'suscripciones', 'streaming', 'netflix'], emoji: '📱' },
-  { keys: ['salario', 'nómina', 'nomina', 'sueldo'],          emoji: '💼' },
-  { keys: ['freelance', 'proyecto', 'trabajo independiente'],  emoji: '🧑‍💻' },
-  { keys: ['inversión', 'inversiones', 'ahorro', 'bolsa'],    emoji: '📈' },
-  { keys: ['venta', 'ventas', 'comercio'],                    emoji: '🏷️' },
-  { keys: ['bonificación', 'bono', 'prima', 'extra'],         emoji: '⭐' },
-  { keys: ['regalo', 'obsequio'],                             emoji: '🎁' },
-  { keys: ['seguro', 'poliza', 'póliza'],                     emoji: '🛡️' },
-  { keys: ['deuda', 'préstamo', 'prestamo', 'crédito'],       emoji: '💳' },
-];
+import { useCategoryEmoji } from '../composables/useCategoryEmoji.js';
 
-const ICON_NAME_MAP = {
-  'shopping_cart': '🛒',
-  'restaurant': '🍽️',
-  'receipt_long': '🧾',
-  'directions_bus': '🚌',
-  'movie': '🎬',
-  'local_hospital': '💊',
-  'school': '📚',
-  'checkroom': '👗',
-  'home': '🏠',
-  'devices': '💻',
-  'fitness_center': '💪',
-  'pets': '🐾',
-  'flight': '✈️',
-  'subscriptions': '📱',
-  'more_horiz': '⋯',
-  'account_balance_wallet': '💼',
-  'laptop_mac': '🧑‍💻',
-  'trending_up': '📈',
-  'star': '⭐',
-  'sell': '🏷️',
-  'credit_card': '💳',
-};
-
+const { resolverEmoji } = useCategoryEmoji();
 const categoriasOriginales = ref([]);
 
 const resolverEmojiPorNombre = (nombre) => {
   if (!nombre) return '🏷️';
   const encontrada = categoriasOriginales.value.find(c => c.nombre === nombre);
-  if (encontrada && encontrada.icono) {
-    if (ICON_NAME_MAP[encontrada.icono]) return ICON_NAME_MAP[encontrada.icono];
-    const codePoint = encontrada.icono.codePointAt(0);
-    if (codePoint && codePoint > 127) return encontrada.icono;
-  }
-  const lower = nombre.toLowerCase();
-  for (const entry of EMOJI_MAP) {
-    if (entry.keys.some(k => lower.includes(k))) return entry.emoji;
-  }
-  return '💸';
+  return resolverEmoji(nombre, encontrada?.icono);
 };
 
 const cargarCategoriasGasto = async () => {
@@ -348,8 +261,20 @@ const cargarCategoriasGasto = async () => {
   }
 };
 
+const modoEdicion = ref(false);
+
 const abrirPresupuesto = () => {
+  modoEdicion.value = false;
   nuevoPresupuesto.value = { categoria: '', montoLimite: null };
+  modalPresupuesto.value = true;
+};
+
+const abrirEditar = (presupuesto) => {
+  modoEdicion.value = true;
+  nuevoPresupuesto.value = {
+    categoria: presupuesto.categoria,
+    montoLimite: presupuesto.montoLimite
+  };
   modalPresupuesto.value = true;
 };
 
@@ -472,10 +397,12 @@ onMounted(() => {
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
 .ocr-option-btn:hover {
   border-color: #6366f1;
   background: #eef2ff;
 }
+
 .ocr-option-btn:active {
   transform: scale(0.97);
 }

@@ -30,6 +30,11 @@ const GastoFijoSchema = new Schema(
         activo: {
             type: Boolean,
             default: true
+        },
+        deudaId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Deuda',
+            default: null
         }
     },
     {

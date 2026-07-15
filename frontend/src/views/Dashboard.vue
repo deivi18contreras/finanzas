@@ -139,10 +139,7 @@ const columns = [
   { name: 'monto', align: 'right', label: 'Monto', field: 'monto', sortable: true }
 ];
 
-const formatMonto = (v) => {
-  if (v === undefined || v === null) return '$0';
-  return (v < 0 ? '-' : '') + '$' + Math.abs(v).toLocaleString();
-};
+import { formatMonto } from '../utils/formatters.js';
 
 const cargarDatos = async () => {
   try {

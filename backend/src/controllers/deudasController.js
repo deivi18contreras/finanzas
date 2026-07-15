@@ -141,3 +141,39 @@ export const eliminarDeuda = async (req, res) => {
     res.status(500).json({ msg: 'Error interno al eliminar la deuda' });
   }
 };
+
+export const editarDeuda = async (req, res) => {
+    try {
+        const { deudaId } = req.params;
+        const { contacto, descripcion, montoTotal, fechaLimite, tipo } = req.body;
+        const usuarioId = req.usuario._id;
+
+        const deuda = await Deuda.findById(deudaId);
+        if (!deuda) {
+            return res.status(404).json({ msg: 'Deuda no encontrada' });
+        }
+        if (deuda.usuarioId.toString() !== usuarioId.toString()) {
+            return res.status(403).json({ msg: 'No tienes permiso para editar esta deuda' });
+        }
+        if (deuda.estado === 'liquidada') {
+            return res.status(400).json({ msg: 'No puedes editar una deuda ya liquidada' });
+        }
+
+        deuda.contacto = contacto || deuda.contacto;
+        deuda.descripcion = descripcion !== undefined ? descripcion : deuda.descripcion;
+        deuda.montoTotal = montoTotal || deuda.montoTotal;
+        deuda.fechaLimite = fechaLimite !== undefined ? fechaLimite : deuda.fechaLimite;
+        deuda.tipo = tipo || deuda.tipo;
+
+        await deuda.save();
+
+        res.json({
+            success: true,
+            msg: 'Deuda actualizada correctamente',
+            deuda
+        });
+    } catch (error) {
+        console.error('Error al editar deuda:', error);
+        res.status(500).json({ msg: error.message || 'Error al actualizar la deuda' });
+    }
+};

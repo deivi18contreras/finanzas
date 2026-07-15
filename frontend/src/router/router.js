@@ -48,6 +48,11 @@ const routes = [
                 path: 'gastos-fijos',
                 name: 'GastosFijos',
                 component: () => import('../views/GastosFijosView.vue')
+            },
+            {
+                path: 'ahorros',
+                name: 'Ahorros',
+                component: () => import('../views/AhorrosView.vue')
             }
         ]
     }

@@ -4,7 +4,8 @@ import {
     obtenerGastosFijos,
     editarGastoFijo,
     eliminarGastoFijo,
-    registrarTodosEsteMes
+    registrarTodosEsteMes,
+    registrarUnoEsteMes
 } from '../controllers/gastoFijoController.js';
 import { protegerRuta } from '../middlewares/authMiddlewares.js';
 
@@ -14,6 +15,8 @@ router.get('/', protegerRuta, obtenerGastosFijos);
 router.post('/', protegerRuta, crearGastoFijo);
 router.put('/:id', protegerRuta, editarGastoFijo);
 router.delete('/:id', protegerRuta, eliminarGastoFijo);
+router.post('/:id/registrar', protegerRuta, registrarUnoEsteMes);
 router.post('/registrar-mes', protegerRuta, registrarTodosEsteMes);
+
 
 export default router;

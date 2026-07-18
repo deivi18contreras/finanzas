@@ -24,6 +24,14 @@ const UsuarioSchema = new Schema(
             type: String,
             default: 'COP'
         },
+        resetPasswordToken: {
+            type: String,
+            default: null
+        },
+        resetPasswordExpire: {
+            type: Date,
+            default: null
+        },
     },
     {
         timestamps: true,

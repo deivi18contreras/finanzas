@@ -406,7 +406,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
 import { deudaService } from '../services/deudaService.js';
-import BalanceCard from '../components/BalanceCard.vue';
+
 import { formatMonto } from '../utils/formatters.js';
 
 const $q = useQuasar();

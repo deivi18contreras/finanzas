@@ -13,6 +13,7 @@ import presupuestoRoutes from './src/routes/presupuestoRoutes.js'
 import ocrRoutes from './src/routes/ocrRoutes.js'
 import gastoFijoRoutes from './src/routes/gastoFijoRoutes.js'
 import ahorroRoutes from './src/routes/ahorroRoutes.js'
+import reminderRoutes from './src/routes/reminderRoutes.js'
 
 
 const app = express();
@@ -35,6 +36,7 @@ app.use('/api/presupuesto', presupuestoRoutes);
 app.use('/api/ocr', ocrRoutes);
 app.use('/api/gastos-fijos', gastoFijoRoutes);
 app.use('/api/ahorros', ahorroRoutes);
+app.use('/api/reminders', reminderRoutes);
 
 
 

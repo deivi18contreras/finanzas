@@ -29,6 +29,39 @@
       </div>
     </div>
 
+    <!-- Selector de Período -->
+    <div class="row q-gutter-sm q-mb-lg items-center">
+      <q-select
+        outlined
+        dense
+        v-model="mesSeleccionado"
+        :options="mesesOpciones"
+        emit-value
+        map-options
+        label="Mes"
+        style="min-width: 150px;"
+        color="primary"
+        bg-color="white"
+        @update:model-value="cargarTransacciones"
+      />
+      <q-select
+        outlined
+        dense
+        v-model="anioSeleccionado"
+        :options="aniosOpciones"
+        emit-value
+        map-options
+        label="Año"
+        style="min-width: 110px;"
+        color="primary"
+        bg-color="white"
+        @update:model-value="cargarTransacciones"
+      />
+      <q-chip color="primary" text-color="white" icon="calendar_month" dense>
+        {{ mesesOpciones.find(m => m.value === mesSeleccionado)?.label }} {{ anioSeleccionado }}
+      </q-chip>
+    </div>
+
     <!-- Resumen del mes en curso con Estilo Pastel del Mockup -->
     <div class="row q-col-gutter-lg q-mb-xl">
       <!-- Tarjeta 1: Ingresos (Verde Pastel) -->
@@ -207,29 +240,12 @@
               :color="nuevaTransaccion.tipo === 'ingreso' ? 'positive' : 'negative'" lazy-rules
               :rules="[val => val && val.length > 0 || 'La descripción es obligatoria']" />
 
-            <q-select filled v-model="nuevaTransaccion.categoria" :options="categoriasDisponibles" label="Categoría"
+            <q-select filled v-model="nuevaTransaccion.categoria" :options="categoriasDisponibles"
+              emit-value map-options
+              label="Categoría"
               :color="nuevaTransaccion.tipo === 'ingreso' ? 'positive' : 'negative'" lazy-rules
               :rules="[val => val && val.length > 0 || 'La categoría es obligatoria']"
               popup-content-class="select-popup-premium">
-              <!-- Slot de opción seleccionada -->
-              <template v-slot:selected-item="scope">
-                <div class="row items-center q-gutter-x-sm">
-                  <span>{{ resolverEmoji(scope.opt) }}</span>
-                  <span class="text-weight-bold" style="color:#1e293b">{{ scope.opt }}</span>
-                </div>
-              </template>
-
-              <!-- Slot de opciones en lista desplegable -->
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section avatar style="min-width:32px">
-                    <span style="font-size:20px">{{ resolverEmoji(scope.opt) }}</span>
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label class="text-weight-bold" style="color:#1e293b">{{ scope.opt }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
             </q-select>
 
             <q-input filled v-model.number="nuevaTransaccion.monto" type="number" label="Monto ($)"
@@ -319,7 +335,7 @@ const filtroExportar = ref({
   anio: new Date().getFullYear()
 });
 
-const mesesDisponibles = [
+const mesesOpciones = [
   { label: 'Enero', value: 1 },
   { label: 'Febrero', value: 2 },
   { label: 'Marzo', value: 3 },
@@ -333,6 +349,14 @@ const mesesDisponibles = [
   { label: 'Noviembre', value: 11 },
   { label: 'Diciembre', value: 12 }
 ];
+
+const anioActual = new Date().getFullYear();
+const aniosOpciones = Array.from({ length: 5 }, (_, i) => ({ label: String(anioActual - i), value: anioActual - i }));
+const mesSeleccionado = ref(new Date().getMonth() + 1);
+const anioSeleccionado = ref(anioActual);
+
+// Alias para compatibilidad con el modal de exportar
+const mesesDisponibles = mesesOpciones;
 
 const abrirExportar = () => {
   modalExportar.value = true;
@@ -504,11 +528,7 @@ const transaccionesFiltradas = computed(() => {
 
 const cargarTransacciones = async () => {
   try {
-    const hoy = new Date();
-    const anio = hoy.getFullYear();
-    const mes = hoy.getMonth() + 1; // 1-12
-
-    const res = await transaccionService.obtenerPorMes(anio, mes);
+    const res = await transaccionService.obtenerPorMes(anioSeleccionado.value, mesSeleccionado.value);
     if (res?.success) {
       transacciones.value = res.transacciones || [];
       totalIngresos.value = res.resumenMes?.totalIngresos || 0;
@@ -523,7 +543,10 @@ const cargarCategorias = async (tipo) => {
   try {
     const res = await categoriaService.obtener(tipo);
     if (res?.success) {
-      categoriasDisponibles.value = res.categorias.map(c => c.nombre);
+      categoriasDisponibles.value = res.categorias.map(c => ({
+        label: `${resolverEmoji(c.nombre, c.icono)} ${c.nombre}`,
+        value: c.nombre
+      }));
     }
   } catch (error) {
     console.error('Error al cargar categorías:', error);

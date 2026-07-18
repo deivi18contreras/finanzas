@@ -76,6 +76,11 @@ export const eliminarCategoria = async (req, res) => {
             return res.status(403).json({ msg: 'No se pueden eliminar las categorías base del sistema' });
         }
 
+        // Verificar que la categoría pertenece al usuario autenticado
+        if (categoria.usuarioId.toString() !== req.usuario._id.toString()) {
+            return res.status(403).json({ msg: 'No tienes permiso para eliminar esta categoría' });
+        }
+
         await Categoria.findByIdAndDelete(categoriaId);
 
         res.json({
@@ -85,5 +90,38 @@ export const eliminarCategoria = async (req, res) => {
     } catch (error) {
         console.error('Error al eliminar categoría:', error);
         res.status(500).json({ msg: 'Error interno al eliminar la categoría' });
+    }
+};
+
+export const editarCategoria = async (req, res) => {
+    try {
+        const { categoriaId } = req.params;
+        const { nombre, icono, color } = req.body;
+
+        const categoria = await Categoria.findById(categoriaId);
+        if (!categoria) {
+            return res.status(404).json({ msg: 'Categoría no encontrada' });
+        }
+        if (!categoria.usuarioId) {
+            return res.status(403).json({ msg: 'No se pueden editar las categorías base del sistema' });
+        }
+        if (categoria.usuarioId.toString() !== req.usuario._id.toString()) {
+            return res.status(403).json({ msg: 'No tienes permiso para editar esta categoría' });
+        }
+
+        if (nombre) categoria.nombre = nombre.trim();
+        if (icono) categoria.icono = icono;
+        if (color) categoria.color = color;
+
+        await categoria.save();
+
+        res.json({
+            success: true,
+            msg: 'Categoría actualizada correctamente',
+            categoria
+        });
+    } catch (error) {
+        console.error('Error al editar categoría:', error);
+        res.status(500).json({ msg: 'Error interno al editar la categoría' });
     }
 };

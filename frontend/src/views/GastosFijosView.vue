@@ -189,11 +189,11 @@
                 <span class="text-weight-bold text-grey-6">$</span>
               </template>
             </q-input>
-            <q-select filled v-model="form.categoria" :options="categorias" label="Categoría" color="primary" lazy-rules
+            <q-select filled v-model="form.categoria" :options="categorias" emit-value map-options label="Categoría" color="primary" lazy-rules
               :rules="[val => val && val.length > 0 || 'Selecciona una categoría']"
               popup-content-class="select-popup-premium" />
-            <q-input filled v-model.number="form.diaPago" type="number" label="Día de pago (1 al 28)" color="primary"
-              :rules="[val => val >= 1 && val <= 28 || 'Ingresa un día entre 1 y 28']" />
+            <q-input filled v-model.number="form.diaPago" type="number" label="Día de pago (1 al 31)" color="primary"
+              :rules="[val => val >= 1 && val <= 31 || 'Ingresa un día entre 1 y 31']" />
             <q-select filled v-model="form.deudaId" :options="opcionesDeudas" label="🔗 Vincular a una deuda (opcional)"
               option-value="value" option-label="label" emit-value map-options clearable color="primary"
               hint="Al registrar este gasto, se abonará automáticamente a la deuda vinculada" />
@@ -218,8 +218,10 @@ import { useQuasar } from 'quasar';
 import { gastoFijoService } from '../services/gastoFijoService.js';
 import { categoriaService } from '../services/categoriaService.js';
 import { deudaService } from '../services/deudaService.js';
+import { useCategoryEmoji } from '../composables/useCategoryEmoji.js';
 
 const $q = useQuasar();
+const { resolverEmoji } = useCategoryEmoji();
 const gastosFijos = ref([]);
 const categorias = ref([]);
 const deudas = ref([]);
@@ -260,7 +262,7 @@ const opcionesDeudas = computed(() =>
   deudas.value
     .filter(d => d.estado === 'pendiente' && d.tipo === 'por_pagar')
     .map(d => ({
-      label: `${d.contacto} — Saldo: $${(d.montoTotal - d.montoPagado).toLocaleString()}`,
+      label: `${d.contacto} — Saldo: $${(d.montoTotal - d.montoPagado).toLocaleString('es-CO')}`,
       value: d._id
     }))
 );
@@ -277,7 +279,12 @@ const cargar = async () => {
 const cargarCategorias = async () => {
   try {
     const res = await categoriaService.obtener('gasto');
-    if (res?.success) categorias.value = res.categorias.map(c => c.nombre);
+    if (res?.success) {
+      categorias.value = res.categorias.map(c => ({
+        label: `${resolverEmoji(c.nombre, c.icono)} ${c.nombre}`,
+        value: c.nombre
+      }));
+    }
   } catch {
     console.error('Error al cargar categorías');
   }

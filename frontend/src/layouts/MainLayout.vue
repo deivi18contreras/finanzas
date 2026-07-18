@@ -4,8 +4,8 @@
     <!-- ─── HEADER ─── -->
     <q-header class="bg-gradient-dark text-white shadow-2">
       <q-toolbar class="q-px-md">
-        <!-- Hamburger solo en desktop -->
-        <q-btn v-if="$q.screen.gt.sm" flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer"
+        <!-- Hamburger visible para poder colapsar/abrir el menú en cualquier pantalla -->
+        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer"
           class="q-mr-sm" />
 
         <q-toolbar-title class="text-weight-bold font-heading text-h6 row items-center">
@@ -34,7 +34,7 @@
     </q-header>
 
     <!-- ─── DRAWER LATERAL (solo desktop) ─── -->
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-sidebar" :width="260" :breakpoint="768">
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-sidebar" :width="260" :breakpoint="1024">
       <q-list class="q-py-md">
         <!-- Grupo 1: Finanzas Diarias -->
         <div class="q-px-md q-mb-xs">
@@ -163,7 +163,7 @@ import { useQuasar } from 'quasar';
 const $q = useQuasar();
 const router = useRouter();
 const authStore = useAuthStore();
-const leftDrawerOpen = ref(false);
+const leftDrawerOpen = ref(true);
 
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;

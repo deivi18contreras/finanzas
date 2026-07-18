@@ -149,9 +149,16 @@ export const eliminarCaja = async (req, res) => {
 
         await Ahorro.findByIdAndDelete(id);
 
+        // Eliminar las transacciones asociadas a este bolsillo de ahorro
+        await Transaccion.deleteMany({
+            usuarioId,
+            descripcion: { $regex: caja.nombre, $options: 'i' },
+            $or: [{ tipo: 'gasto' }, { tipo: 'ingreso' }]
+        });
+
         res.json({
             success: true,
-            msg: 'Caja de ahorro eliminada del sistema.'
+            msg: 'Caja de ahorro y sus transacciones asociadas fueron eliminadas correctamente.'
         });
     } catch (error) {
         console.error('Error al eliminar caja de ahorro:', error);

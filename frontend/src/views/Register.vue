@@ -158,19 +158,7 @@ const handleRegister = async () => {
     }
 };
 
-const registroConGoogle = () => {
-    $q.loading.show({ message: 'Conectando con Google...' });
-    setTimeout(() => {
-        $q.loading.hide();
-    }, 1200);
-};
 
-const registroConFacebook = () => {
-    $q.loading.show({ message: 'Conectando con Facebook...' });
-    setTimeout(() => {
-        $q.loading.hide();
-    }, 1200);
-};
 </script>
 
 <style scoped>

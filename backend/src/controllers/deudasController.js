@@ -53,7 +53,7 @@ export const registrarAbono = async (req, res) => {
 
         const deuda = await Deuda.findById(deudaId);
         if (!deuda) {
-            return res.status(404).json({ msg: 'Deudad no encontrada' });
+            return res.status(404).json({ success: false, msg: 'Deuda no encontrada' });
         }
         if (deuda.estado === 'liquidada') {
             return res.status(400).json({ msg: 'Esta deuda ya se encuentra completamente liquidada ' })

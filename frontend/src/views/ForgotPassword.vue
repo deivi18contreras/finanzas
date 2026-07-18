@@ -1,22 +1,22 @@
 <template>
-  <div class="login-wrapper row justify-center items-center">
+  <div class="forgot-wrapper row justify-center items-center">
     <div class="absolute-full bg-decoration">
       <div class="shape shape-1"></div>
       <div class="shape shape-2"></div>
     </div>
     
-    <q-card class="q-pa-lg glass-panel login-card animate-fade-in" style="width: 100%; max-width: 420px;">
+    <q-card class="q-pa-lg glass-panel forgot-card animate-fade-in" style="width: 100%; max-width: 420px;">
       
       <!-- Encabezado / Logo -->
       <q-card-section class="text-center q-pb-none">
-        <q-avatar size="80px" font-size="52px" class="bg-gradient-primary text-white shadow-3 glow-effect" icon="wallet" />
-        <div class="text-h4 font-heading q-mt-md text-slate-800 text-weight-bold">Bienvenido</div>
-        <div class="text-subtitle2 text-grey-6 q-mt-xs">Ingresa a tu portal de finanzas personales</div>
+        <q-avatar size="80px" font-size="52px" class="bg-gradient-primary text-white shadow-3 glow-effect" icon="lock_reset" />
+        <div class="text-h4 font-heading q-mt-md text-slate-800 text-weight-bold">Recuperar Acceso</div>
+        <div class="text-subtitle2 text-grey-6 q-mt-xs">Ingresa tu correo para recibir un enlace de recuperación</div>
       </q-card-section>
 
-      <!-- Formulario Tradicional -->
+      <!-- Formulario -->
       <q-card-section class="q-pt-md">
-        <q-form @submit.prevent="handleLogin" class="q-gutter-y-sm">
+        <q-form @submit.prevent="handleResetRequest" class="q-gutter-y-sm">
           <q-input 
             outlined 
             v-model="email" 
@@ -24,62 +24,35 @@
             type="email" 
             lazy-rules
             color="primary"
-            :rules="[val => val && val.length > 0 || 'El correo es obligatorio']"
+            :rules="[
+              val => val && val.length > 0 || 'El correo es obligatorio',
+              val => /.+@.+\..+/.test(val) || 'Ingresa un correo válido'
+            ]"
           >
             <template v-slot:prepend>
               <q-icon name="mail" color="primary" />
             </template>
           </q-input>
 
-          <q-input 
-            outlined 
-            v-model="password" 
-            label="Contraseña" 
-            :type="isPwd ? 'password' : 'text'" 
-            lazy-rules
-            color="primary"
-            :rules="[val => val && val.length > 0 || 'La contraseña es obligatoria']"
-          >
-            <template v-slot:prepend>
-              <q-icon name="lock" color="primary" />
-            </template>
-            <template v-slot:append>
-              <q-icon 
-                :name="isPwd ? 'visibility_off' : 'visibility'" 
-                class="cursor-pointer" 
-                @click="isPwd = !isPwd" 
-                color="primary"
-              />
-            </template>
-          </q-input>
-
-          <div class="row justify-end q-mt-xs q-mb-md">
-            <router-link to="/forgot-password" class="text-primary text-caption text-weight-bold link-hover" style="text-decoration: none;">
-              ¿Olvidaste tu contraseña?
-            </router-link>
-          </div>
-
           <div class="q-mt-lg">
             <q-btn 
-              label="Ingresar al Sistema" 
+              label="Enviar Enlace" 
               type="submit" 
               class="full-width bg-gradient-primary text-white text-weight-bold" 
               size="lg" 
-              :loading="authStore.cargando" 
+              :loading="cargando" 
               no-caps 
             />
           </div>
         </q-form>
       </q-card-section>
 
-
-
-      <!-- Enlace a Registro -->
+      <!-- Enlace a Login -->
       <q-card-section class="text-center q-pt-none">
         <div class="text-grey-6 text-caption text-weight-medium">
-          ¿No tienes una cuenta?
-          <router-link to="/register" class="text-primary text-weight-bold link-hover" style="text-decoration: none;">
-            Regístrate aquí
+          ¿Recordaste tu contraseña?
+          <router-link to="/login" class="text-primary text-weight-bold link-hover" style="text-decoration: none;">
+            Inicia sesión aquí
           </router-link>
         </div>
       </q-card-section>
@@ -90,47 +63,46 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useAuthStore } from '../store/auth.js';
 import { useRouter } from 'vue-router';
+import { authService } from '../services/authService.js';
 import { useQuasar } from 'quasar';
 
 const $q = useQuasar();
 const router = useRouter();
-const authStore = useAuthStore();
-
 const email = ref('');
-const password = ref('');
-const isPwd = ref(true);
+const cargando = ref(false);
 
-const handleLogin = async () => {
-    $q.loading.show({
-        message: 'Validando credenciales...'
-    });
+const handleResetRequest = async () => {
+    cargando.value = true;
     try {
-        const respuesta = await authStore.iniciarSesion(email.value, password.value);
+        const respuesta = await authService.solicitarRecuperacion(email.value);
         if (respuesta?.success) {
             $q.notify({
                 type: 'positive',
-                message: `Bienvenido de nuevo, ${authStore.usuario?.nombre || 'Usuario'}`,
-                position: 'top'
+                message: respuesta.msg || 'Enlace de recuperación enviado con éxito.',
+                position: 'top',
+                timeout: 4000
             });
-            router.push({ name: 'Dashboard' });
+            email.value = '';
+            // Redirigir al login después de 3 segundos
+            setTimeout(() => {
+                router.push({ name: 'Login' });
+            }, 3000);
         }
     } catch (error) {
         $q.notify({
             type: 'negative',
-            message: error.response?.data?.msg || 'Error al iniciar sesión. Verifica tus credenciales.',
+            message: error.response?.data?.msg || 'Error al procesar la solicitud.',
             position: 'top'
         });
     } finally {
-        $q.loading.hide();
+        cargando.value = false;
     }
 };
-
 </script>
 
 <style scoped>
-.login-wrapper {
+.forgot-wrapper {
   min-height: 100vh;
   width: 100vw;
   background-color: #0f172a;
@@ -166,7 +138,7 @@ const handleLogin = async () => {
   right: -100px;
 }
 
-.login-card {
+.forgot-card {
   z-index: 1;
   background: rgba(255, 255, 255, 0.85) !important;
   border: 1px solid rgba(255, 255, 255, 0.4) !important;
@@ -176,7 +148,7 @@ const handleLogin = async () => {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3) !important;
 }
 
-.login-card:hover {
+.forgot-card:hover {
   transform: none !important;
 }
 

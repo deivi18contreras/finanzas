@@ -1,4 +1,4 @@
-import { getData, postData, deleteData } from "./apiService.js";
+import { getData, postData, deleteData, putData } from "./apiService.js";
 
 export const categoriaService = {
   async obtener(tipo) {
@@ -7,6 +7,10 @@ export const categoriaService = {
 
   async crear(datos) {
     return await postData("/categoria", datos);
+  },
+
+  async editar(categoriaId, datos) {
+    return await putData(`/categoria/${categoriaId}`, datos);
   },
 
   async eliminar(categoriaId) {

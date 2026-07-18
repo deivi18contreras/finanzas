@@ -15,6 +15,24 @@ const routes = [
         meta: { requiereAuth: false }
     },
     {
+        path: '/forgot-password',
+        name: 'ForgotPassword',
+        component: () => import('../views/ForgotPassword.vue'),
+        meta: { requiereAuth: false }
+    },
+    {
+        path: '/reset-password/:token',
+        name: 'ResetPassword',
+        component: () => import('../views/ResetPassword.vue'),
+        meta: { requiereAuth: false }
+    },
+    {
+        path: '/mantenimiento',
+        name: 'Mantenimiento',
+        component: () => import('../views/MantenimientoView.vue'),
+        meta: { requiereAuth: false }
+    },
+    {
         path: '/',
         component: () => import('../layouts/MainLayout.vue'),
         meta: { requiereAuth: true },
@@ -70,7 +88,7 @@ router.beforeEach((to, from) => {
 
     if (to.meta.requiereAuth && !autenticado) {
         return { name: 'Login' };
-    } else if (!to.meta.requiereAuth && autenticado && (to.name === 'Login' || to.name === 'Register')) {
+    } else if (!to.meta.requiereAuth && autenticado && ['Login', 'Register', 'ForgotPassword', 'ResetPassword'].includes(to.name)) {
         return { name: 'Dashboard' };
     }
 });

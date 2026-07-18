@@ -1,6 +1,5 @@
 import Tesseract from 'tesseract.js';
 import fs from 'fs';
-import Transaccion from '../models/Transaccion.js';
 
 export const escanearFactura = async (req, res) => {
     try {

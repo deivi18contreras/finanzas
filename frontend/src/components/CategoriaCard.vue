@@ -29,6 +29,17 @@
     <!-- Nombre -->
     <div class="cat-name">{{ categoria.nombre }}</div>
 
+    <!-- Botón editar (solo categorías propias, fuera de modo selección) -->
+    <q-btn
+      v-if="!modoSeleccion && categoria.usuarioId"
+      icon="edit"
+      flat round dense
+      color="primary"
+      size="xs"
+      class="cat-edit-btn"
+      @click.stop="$emit('editar', categoria)"
+    />
+
     <!-- Botón eliminar (solo categorías propias, fuera de modo selección) -->
     <q-btn
       v-if="!modoSeleccion && categoria.usuarioId"
@@ -172,7 +183,16 @@ const { resolverEmoji } = useCategoryEmoji();
   transition: opacity 0.2s ease;
 }
 
-.cat-card:hover .cat-delete-btn {
+.cat-edit-btn {
+  position: absolute;
+  top: 6px;
+  right: 30px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.cat-card:hover .cat-delete-btn,
+.cat-card:hover .cat-edit-btn {
   opacity: 1;
 }
 

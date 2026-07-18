@@ -77,6 +77,7 @@
         :modo-seleccion="modoSeleccion"
         :seleccionada="seleccionadas.includes(cat._id)"
         @toggle-seleccion="toggleSeleccion"
+        @editar="abrirEditarModal"
         @eliminar="eliminarCategoria"
       />
 
@@ -106,7 +107,7 @@
           <div class="row items-start">
             <div>
               <div class="modal-title">
-                {{ emojiPreview }} Nueva Categoría
+                {{ emojiPreview }} {{ modoEdicion ? 'Editar Categoría' : 'Nueva Categoría' }}
               </div>
               <div class="modal-subtitle">Se asigna un emoji automáticamente</div>
             </div>
@@ -119,11 +120,11 @@
           <q-form ref="formCategoria" class="q-gutter-y-sm">
 
             <!-- Pill toggle tipo -->
-            <div>
+            <div :style="modoEdicion ? 'opacity: 0.6; pointer-events: none;' : ''">
               <div class="text-caption text-grey-6 text-weight-bold q-mb-xs" style="letter-spacing:0.05em">TIPO</div>
               <div class="type-toggle">
-                <div class="type-pill" :class="nuevaCategoria.tipo === 'ingreso' ? 'active-ingreso' : ''" @click="nuevaCategoria.tipo = 'ingreso'">↑ Ingreso</div>
-                <div class="type-pill" :class="nuevaCategoria.tipo === 'gasto' ? 'active-gasto' : ''" @click="nuevaCategoria.tipo = 'gasto'">↓ Gasto</div>
+                <div class="type-pill" :class="nuevaCategoria.tipo === 'ingreso' ? 'active-ingreso' : ''" @click="!modoEdicion && (nuevaCategoria.tipo = 'ingreso')">↑ Ingreso</div>
+                <div class="type-pill" :class="nuevaCategoria.tipo === 'gasto' ? 'active-gasto' : ''" @click="!modoEdicion && (nuevaCategoria.tipo = 'gasto')">↓ Gasto</div>
               </div>
             </div>
 
@@ -185,6 +186,9 @@ const seleccionadas = ref([]);
 const filtroTipo = ref('todas');
 const emojiPreview = ref('🏷️');
 
+const modoEdicion = ref(false);
+const editandoId = ref(null);
+
 const nuevaCategoria = ref({ nombre: '', tipo: 'gasto' });
 const categorias = ref([]);
 
@@ -233,8 +237,18 @@ const cargarCategorias = async () => {
 };
 
 const abrirModal = () => {
+  modoEdicion.value = false;
+  editandoId.value = null;
   nuevaCategoria.value = { nombre: '', tipo: 'gasto' };
   emojiPreview.value = '💸';
+  modalCategoria.value = true;
+};
+
+const abrirEditarModal = (categoria) => {
+  modoEdicion.value = true;
+  editandoId.value = categoria._id;
+  nuevaCategoria.value = { nombre: categoria.nombre, tipo: categoria.tipo };
+  emojiPreview.value = resolverEmoji(categoria.nombre, categoria.icono);
   modalCategoria.value = true;
 };
 
@@ -247,18 +261,28 @@ const guardarCategoria = async () => {
   try {
     $q.loading.show({ message: 'Guardando...' });
     const emoji = resolverEmoji(nuevaCategoria.value.nombre);
-    const res = await categoriaService.crear({
-      ...nuevaCategoria.value,
-      icono: emoji,
-      color: nuevaCategoria.value.tipo === 'ingreso' ? '#10b981' : '#6366f1'
-    });
+    
+    let res;
+    if (modoEdicion.value) {
+      res = await categoriaService.editar(editandoId.value, {
+        nombre: nuevaCategoria.value.nombre,
+        icono: emoji
+      });
+    } else {
+      res = await categoriaService.crear({
+        ...nuevaCategoria.value,
+        icono: emoji,
+        color: nuevaCategoria.value.tipo === 'ingreso' ? '#10b981' : '#6366f1'
+      });
+    }
+    
     if (res?.success) {
       modalCategoria.value = false;
-      $q.notify({ type: 'positive', message: 'Categoría creada.', position: 'top' });
+      $q.notify({ type: 'positive', message: modoEdicion.value ? 'Categoría actualizada.' : 'Categoría creada.', position: 'top' });
       await cargarCategorias();
     }
   } catch (error) {
-    $q.notify({ type: 'negative', message: error.response?.data?.msg || 'Error al crear.', position: 'top' });
+    $q.notify({ type: 'negative', message: error.response?.data?.msg || 'Error al guardar.', position: 'top' });
   } finally {
     $q.loading.hide();
   }

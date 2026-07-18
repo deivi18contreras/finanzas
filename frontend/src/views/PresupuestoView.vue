@@ -75,29 +75,11 @@
         <div class="modal-body">
           <q-form ref="formPresupuesto" class="q-gutter-y-sm">
             <q-select filled v-model="nuevoPresupuesto.categoria" :options="categoriasGasto"
+              emit-value map-options
               label="Selecciona Categoría" color="primary" lazy-rules
               :rules="[val => val && val.length > 0 || 'Selecciona una categoría']"
               popup-content-class="select-popup-premium"
               :disable="modoEdicion">
-              <!-- Slot de opción seleccionada -->
-              <template v-slot:selected-item="scope">
-                <div class="row items-center q-gutter-x-sm">
-                  <span>{{ resolverEmojiPorNombre(scope.opt) }}</span>
-                  <span class="text-weight-bold" style="color:#1e293b">{{ scope.opt }}</span>
-                </div>
-              </template>
-
-              <!-- Slot de opciones en lista desplegable -->
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section avatar style="min-width:32px">
-                    <span style="font-size:20px">{{ resolverEmojiPorNombre(scope.opt) }}</span>
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label class="text-weight-bold" style="color:#1e293b">{{ scope.opt }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
             </q-select>
             <q-input filled v-model.number="nuevoPresupuesto.montoLimite" type="number" label="Monto Límite ($)"
               color="primary" lazy-rules :rules="[val => val && val > 0 || 'Ingresa un monto válido']">
@@ -245,8 +227,10 @@ const categoriasOriginales = ref([]);
 
 const resolverEmojiPorNombre = (nombre) => {
   if (!nombre) return '🏷️';
-  const encontrada = categoriasOriginales.value.find(c => c.nombre === nombre);
-  return resolverEmoji(nombre, encontrada?.icono);
+  // Soporte para cuando nombre viene como objeto o string limpio
+  const cleanName = typeof nombre === 'object' ? nombre.value : nombre;
+  const encontrada = categoriasOriginales.value.find(c => c.nombre === cleanName);
+  return resolverEmoji(cleanName, encontrada?.icono);
 };
 
 const cargarCategoriasGasto = async () => {
@@ -254,7 +238,10 @@ const cargarCategoriasGasto = async () => {
     const res = await categoriaService.obtener('gasto');
     if (res?.success) {
       categoriasOriginales.value = res.categorias || [];
-      categoriasGasto.value = res.categorias.map(c => c.nombre) || [];
+      categoriasGasto.value = res.categorias.map(c => ({
+        label: `${resolverEmoji(c.nombre, c.icono)} ${c.nombre}`,
+        value: c.nombre
+      })) || [];
     }
   } catch (error) {
     console.error('Error al cargar categorías:', error);
